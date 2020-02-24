@@ -1,0 +1,17 @@
+@font-face {
+	font-family: 'SBL Hebrew';
+	src: 'sbl-hebrew.ttf';
+}
+
+.ml-05 {
+	margin-left: 0.12rem !important;
+}
+
+.hebrew {
+	font-family: 'SBL Hebrew';
+	font-size: 150%;
+}
+
+.btn-toolbar>.border {
+	margin-left: 3px;
+}
