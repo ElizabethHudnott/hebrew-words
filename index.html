@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Aleph-Bet Database</title>
+	<title>Hebrew Words Database</title>
+	<link rel="icon" href="img/favicon.png">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 	<link rel="stylesheet" href="site.css">
 	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
@@ -9,9 +10,9 @@
 	<script src="search.js" defer></script>
 </head>
 <body>
-	<div class="container">
-		<header class="jumbotron">
-			<h2 class="display-3">The Aleph-Bet Database</h2>
+	<div class="container" id="container">
+		<header class="jumbotron" id="header">
+			<h2 class="display-3">The <span class="hebrew">א'ב</span> Database</h2>
 			<p class="lead">
 				Find Hebrew words for beginners by letters learned so far.
 			</p>
@@ -106,8 +107,8 @@
 			</div>
 
 			<h3>Vowels</h3>
-			<div class="btn-toolbar flex-row-reverse mb-2" role="toolbar" aria-label="Vowel selection buttons">
-				<div class="border">
+			<div class="btn-toolbar flex-row-reverse mb-3" role="toolbar" aria-label="Vowel selection buttons">
+				<div class="border mb-2">
 					<div class="btn-group flex-row-reverse m-1" role="group">
 						<button type="button" class="btn btn-light hebrew ml-05" data-toggle="tristate-button" data-symbols="210" aria-pressed="false">בַ</button>
 						<button type="button" class="btn btn-light hebrew ml-05" data-toggle="tristate-button" data-symbols="110" aria-pressed="false">חַ</button>
@@ -118,7 +119,7 @@
 						<small>A-Type</small>
 					</div>
 				</div>
-				<div class="border">
+				<div class="border mb-2">
 					<div class="btn-group flex-row-reverse m-1" role="group">
 						<button type="button" class="btn btn-light hebrew ml-05" data-toggle="tristate-button" data-symbols="230" aria-pressed="false">בֶ</button>
 						<button type="button" class="btn btn-light hebrew ml-05" data-toggle="tristate-button" data-symbols="240" aria-pressed="false">בֵ</button>
@@ -128,7 +129,7 @@
 						<small>E-Type</small>
 					</div>
 				</div>
-				<div class="border">
+				<div class="border mb-2">
 					<div class="btn-group flex-row-reverse m-1" role="group">
 						<button type="button" class="btn btn-light hebrew ml-05" data-toggle="tristate-button" data-symbols="250" aria-pressed="false">בִ</button>
 						<button type="button" class="btn btn-light hebrew" data-toggle="tristate-button" data-symbols="150" aria-pressed="false">בִי</button>
@@ -137,7 +138,7 @@
 						<small>I-Type</small>
 					</div>
 				</div>
-				<div class="border">
+				<div class="border mb-2">
 					<div class="btn-group flex-row-reverse m-1" role="group">
 						<button type="button" class="btn btn-light hebrew ml-05" data-toggle="tristate-button" data-symbols="260" aria-pressed="false">בׇ</button>
 						<button type="button" class="btn btn-light hebrew ml-05" data-toggle="tristate-button" data-symbols="270" aria-pressed="false">בֹ</button>
@@ -147,7 +148,7 @@
 						<small>O-Type</small>
 					</div>
 				</div>
-				<div class="border">
+				<div class="border mb-2">
 					<div class="btn-group flex-row-reverse m-1" role="group">
 						<button type="button" class="btn btn-light hebrew ml-05" data-toggle="tristate-button" data-symbols="280" aria-pressed="false">בֻ</button>
 						<button type="button" class="btn btn-light hebrew" data-toggle="tristate-button" data-symbols="180" aria-pressed="false">בוּ</button>
@@ -156,7 +157,7 @@
 						<small>U-Type</small>
 					</div>
 				</div>
-				<div class="border">
+				<div class="border mb-2">
 					<div class="btn-group flex-row-reverse m-1" role="group">
 						<button type="button" class="btn btn-sm btn-light ml-05" data-toggle="tristate-button" data-symbols="190" aria-pressed="false">Initial Sh'va</button>
 						<button type="button" class="btn btn-light hebrew ml-05" data-toggle="tristate-button" data-symbols="290" aria-pressed="false">בְ</button>
@@ -166,7 +167,7 @@
 						<small>Sh'va</small>
 					</div>
 				</div>
-				<div class="border">
+				<div class="border mb-2">
 					<div class="btn-group flex-row-reverse m-1" role="group">
 						<button type="button" class="btn btn-light hebrew ml-05" data-toggle="tristate-button" data-symbols="111" aria-pressed="false">בַיְ</button>
 						<button type="button" class="btn btn-light hebrew ml-05" data-toggle="tristate-button" data-symbols="171" aria-pressed="false">בוֹי</button>
@@ -176,7 +177,7 @@
 						<small>Diphthongs</small>
 					</div>
 				</div>
-				<div class="border">
+				<div class="border mb-2">
 					<div class="btn-group flex-row-reverse m-1" role="group">
 						<button type="button" class="btn btn-light hebrew" data-toggle="tristate-button" data-symbols="114 115 121 124 125 134 135 144 145 174 175 184 185" aria-pressed="false">בֹא</button>
 					</div>
@@ -187,15 +188,44 @@
 			</div>
 
 			<h2>Words Data File</h2>
-			<div class="form-group">
-				<div class="input-group mb-3">
-				  <div class="input-group-prepend">
-					<span class="input-group-text" id="filename-description">Filename</span>
-				  </div>
-				  <div class="custom-file">
-					<input type="file" class="custom-file-input" id="filename" aria-describedby="filename-description" accept="text/plain">
-					<label class="custom-file-label" for="filename">Choose file</label>
-				  </div>
+			<div class="row">
+				<div class="col-3">
+					<div class="nav flex-column nav-pills" id="word-sources-tab" role="tablist" aria-orientation="vertical">
+						<a class="nav-link active" id="word-source-url-tab" data-toggle="pill" href="#word-source-url" role="tab" aria-controls="word-source-url" aria-selected="true">
+							Web Hosted
+						</a>
+						<a class="nav-link" id="word-source-file-tab" data-toggle="pill" href="#word-source-file" role="tab" aria-controls="word-source-file" aria-selected="false">
+							File Upload
+						</a>
+					</div>
+				</div>
+				<div class="col-9">
+					<div class="tab-content">
+						<div class="tab-pane fade show active" id="word-source-url" role="tabpanel" aria-labelledby="word-source-url-tab">
+							<div class="form-group">
+								<label for="words-url">Preset wordlist</label>
+								<select id="words-url" class="form-control">
+									<option value="words/beginners-wordlist.txt">
+										Printed Beginners Wordlists (My Jewish Learning &amp; JTeach.org)
+									</option>
+								</select>
+							</div>
+						</div>
+						<div class="tab-pane fade" id="word-source-file" role="tabpanel" aria-labelledby="word-source-file-tab">
+							<div class="form-group">
+								<label for="words-filename">File upload</label>
+								<div class="input-group mb-3">
+								  <div class="input-group-prepend">
+									<span class="input-group-text" id="words-filename-description">Filename</span>
+								  </div>
+								  <div class="custom-file">
+									<input type="file" class="custom-file-input" id="words-filename" aria-describedby="words-filename-description" accept="text/plain">
+									<label class="custom-file-label" for="words-filename">Choose file</label>
+								  </div>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 

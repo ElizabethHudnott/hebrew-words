@@ -8,11 +8,19 @@
 	src: 'sbl-hebrew.ttf';
 }
 
-.bg-permitted {
+body {
+	background-color: #801000;
+}
+
+#container {
+	background-color: White;
+}
+
+.bg-permitted, .bg-permitted:focus {
 	background-color: var(--permitted-color);
 }
 
-.bg-required {
+.bg-required, .bg-required:focus {
 	background-color: var(--required-color);	
 }
 
@@ -29,12 +37,22 @@
 	font-size: 150%;
 }
 
-button[data-toggle=tristate-button][aria-pressed=mixed] {
-	background-color: var(--permitted-color);
+#header {
+	background-color: #f0f0f0;
+	background-image: url('img/aleph-bet.png');
+	margin-left: -15px;
+	margin-right: -15px;
 }
 
-button[data-toggle=tristate-button][aria-pressed=true] {
-	background-color: var(--required-color);
+#header>* {
+	background-color: white;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+	width: fit-content;
+}
+
+.display-3 .hebrew {
+	font-size: 130%;
 }
 
 .btn-toolbar>.border {

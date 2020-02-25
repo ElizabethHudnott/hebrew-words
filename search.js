@@ -226,7 +226,7 @@ fileReader.onload = function (event) {
 	parseFile(this.result);
 };
 
-document.getElementById('filename').addEventListener('input', function (event) {
+document.getElementById('words-filename').addEventListener('input', function (event) {
 	const file = this.files[0];
 	if (file) {
 		fileReader.readAsText(file);
@@ -323,3 +323,29 @@ function showResults() {
 		resultsTable.appendChild(row);
 	}
 }
+
+function downloadWords(url) {
+	const request = new XMLHttpRequest();
+	request.open('GET', url);
+	request.timeout = 60000;
+
+	request.addEventListener('load', function (event) {
+		if (request.status < 400) {
+			parseFile(request.response);
+		} else {
+			
+		}
+	});
+	
+	request.addEventListener('error', function (event) {
+		
+	});
+
+	request.addEventListener('timeout', function (event) {
+		
+	});
+
+	request.send();
+}
+
+downloadWords('words/beginners-wordlist.txt');
