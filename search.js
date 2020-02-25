@@ -248,21 +248,26 @@ function deleteAll(set, values) {
 {
 	function tristateToggle() {
 		const currentValue = this.getAttribute('aria-pressed');
+		const classList = this.classList;
 		const symbols = this.dataset.symbols.split(' ');
 
 		switch (currentValue) {
 		case 'false':
 			this.setAttribute('aria-pressed', 'mixed');
+			classList.add('bg-permitted');
 			addAll(permitted, symbols);
 			filterWords(words);
 			break;
 		case 'mixed':
 			this.setAttribute('aria-pressed', 'true');
+			classList.remove('bg-permitted');
+			classList.add('bg-required');
 			addAll(required, symbols);
 			filterWords(words);
 			break;
 		default: 
 			this.setAttribute('aria-pressed', 'false');
+			classList.remove('bg-required');
 			deleteAll(permitted, symbols);
 			deleteAll(required, symbols);
 			filterWords(filteredWords);

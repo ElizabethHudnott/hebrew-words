@@ -28,19 +28,27 @@
 			</ul>
 			<table class="table fit-content table-borderless">
 				<tr>
-					<th style="background-color: var(--permitted-color); min-width: 3em">
+					<th class="bg-permitted" style="min-width: 3em">
 						<span class="sr-only">Clicked once</span>
 					</th>
 					<td>
-						The words shown <em>might use</em> some of the symbols highlighted in this colour.
+						The words shown <em>might use</em> some of the symbols highlighted in this colour, click once.
 					</td>
 				</tr>
 				<tr>
-					<th style="background-color: var(--required-color)">
+					<th class="bg-required">
 						<span class="sr-only">Clicked twice</span>
 					</th>
 					<td>
-						The words shown <em>will use</em> at least one of the symbols highlighted in this colour.
+						The words shown <em>will use</em> at least one of the symbols highlighted in this colour, click twice.
+					</td>
+				</tr>
+				<tr>
+					<th class="bg-light">
+						<span class="sr-only">Not clicked or clicked three times</span>
+					</th>
+					<td>
+						The words shown <em>will not use</em> any of the symbols that have this colour.
 					</td>
 				</tr>
 			</table>

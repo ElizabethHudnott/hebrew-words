@@ -8,6 +8,14 @@
 	src: 'sbl-hebrew.ttf';
 }
 
+.bg-permitted {
+	background-color: var(--permitted-color);
+}
+
+.bg-required {
+	background-color: var(--required-color);	
+}
+
 .fit-content {
 	width: fit-content;
 }
