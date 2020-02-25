@@ -16,6 +16,19 @@ body {
 	background-color: White;
 }
 
+main h2:first-child {
+	margin-top: 0;
+}
+
+main h2 {
+	margin-top: 1rem;
+}
+
+main h3 {
+	margin-top: 0.5rem;
+}
+
+
 .bg-permitted, .bg-permitted:focus {
 	background-color: var(--permitted-color);
 }
