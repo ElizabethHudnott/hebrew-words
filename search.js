@@ -1,3 +1,5 @@
+'use strict';
+
 const ALEPH	= 0;
 const VET	= 1;
 const BET	= 2;
@@ -35,12 +37,16 @@ const SHIN = 33;
 const TAV	= 34;
 const TAV_WITH_DAGESH = 35;
 const DAGESH = 36;
+const PUNCTUATION = 99;
 const VOWEL_MARK= 200;
 const HE_MATER = 4;
 const ALEPH_MATER = 5;
 const PATACH	= 210;
+const STOLEN_PATACH = 110;
+const AI		= 111;
 const CHATAF_PATACH = 211;
 const KAMATZ	= 220;
+const KAMATZ_YOD_VAV = 121;
 const KAMATZ_HE	= 124;
 const SEGOL		= 230;
 const SEGOL_YOD	= 130;
@@ -53,8 +59,10 @@ const KAMATZ_KATAN = 260;
 const CHATAF_KAMATZ= 261;
 const CHOLAM	= 270;
 const CHOLAM_VAV= 170;
+const OI		= 171;
 const KUBUTZ	= 280;
 const SHURUK	= 180;
+const UI		= 181;
 const SHVA		= 290;
 const INITIAL_SHVA = 190;
 
@@ -101,15 +109,22 @@ symbolMap.set('ֻ', KUBUTZ);
 symbolMap.set('ֲ', CHATAF_PATACH);
 symbolMap.set('ֱ', CHATAF_SEGOL);
 symbolMap.set('ֳ', CHATAF_KAMATZ);
+symbolMap.set(' ', PUNCTUATION);
+symbolMap.set(',', PUNCTUATION);
+symbolMap.set('.', PUNCTUATION);
+symbolMap.set('?', PUNCTUATION);
 //symbolMap.set('', );
 
 function parseWord(word) {
 	const chars = word.normalize('NFD').split('');
-	let  letters = new Array(chars.length);
+	let  letters = [];
 	let newLetters = [];
 	// Translates characters to numeric codes.
 	for (let i = 0; i < chars.length; i++) {
-		letters[i] = symbolMap.get(chars[i]);
+		const code = symbolMap.get(chars[i]);
+		if (code !== undefined) {
+			letters.push(code);
+		}
 	}
 	// Place dagesh before vowel and shin or sin dot before its vowel.
 	let i = 0;
@@ -173,4 +188,133 @@ function parseWord(word) {
 	}
 	letters = newLetters;
 	return letters;
+}
+
+class Word {
+	constructor(hebrewText, translation) {
+		this.hebrewText = hebrewText;
+		this.parseResult = parseWord(hebrewText);
+		this.translation = translation;
+	}
+
+	toString() {
+		return this.hebrewText;
+	}
+}
+
+let words = [];
+const permitted = new Set();
+permitted.add(PUNCTUATION);
+const required = new Set();
+let filteredWords = [];
+let selectedWords = [];
+
+function parseFile(content) {
+	words = [];
+	const lineFormat = /^(\p{Script=Hebrew}+)?(?:\t+(.*))?\n/muy;
+	let match;
+	while ((match = lineFormat.exec(content)) !== null) {
+		if (match[1] !== undefined) {
+			const newWord = new Word(match[1], match[2]);
+			words.push(newWord);
+		}
+	}
+}
+
+const fileReader = new FileReader();
+fileReader.onload = function (event) {
+	parseFile(this.result);
+};
+
+document.getElementById('filename').addEventListener('input', function (event) {
+	const file = this.files[0];
+	if (file) {
+		fileReader.readAsText(file);
+	}
+});
+
+function addAll(set, values) {
+	for (let value of values) {
+		set.add(parseInt(value));
+	}
+}
+
+function deleteAll(set, values) {
+	for (let value of values) {
+		set.delete(parseInt(value));
+	}	
+}
+
+{
+	function tristateToggle() {
+		const currentValue = this.getAttribute('aria-pressed');
+		const symbols = this.dataset.symbols.split(' ');
+
+		switch (currentValue) {
+		case 'false':
+			this.setAttribute('aria-pressed', 'mixed');
+			addAll(permitted, symbols);
+			filterWords(words);
+			break;
+		case 'mixed':
+			this.setAttribute('aria-pressed', 'true');
+			addAll(required, symbols);
+			filterWords(words);
+			break;
+		default: 
+			this.setAttribute('aria-pressed', 'false');
+			deleteAll(permitted, symbols);
+			deleteAll(required, symbols);
+			filterWords(filteredWords);
+		}
+	}
+
+	const tristateButtons = document.querySelectorAll('button[data-toggle=tristate-button]');
+	for (let button of tristateButtons) {
+		button.addEventListener('click', tristateToggle);
+	}
+}
+
+function filterWords(pool) {
+	filteredWords = [];
+	for (let word of pool) {
+		let hasRequired = required.size === 0;
+		let okay = true;
+		for (let symbol of word.parseResult) {
+			if (!permitted.has(symbol)) {
+				okay = false;
+				break;
+			} else if (!hasRequired && required.has(symbol)) {
+				hasRequired = true;
+			}
+		}
+		if (okay && hasRequired) {
+			filteredWords.push(word);
+		}
+	}
+	selectWords();
+}
+
+function selectWords() {
+	selectedWords = filteredWords;
+	showResults();
+}
+
+const resultsTable = document.getElementById('results');
+
+function showResults() {
+	resultsTable.innerText = '';
+	for (let word of selectedWords) {
+		const row = document.createElement('tr');
+		const hebrewCell = document.createElement('td');
+		hebrewCell.classList.add('hebrew');
+		hebrewCell.innerText = word.hebrewText;
+		row.appendChild(hebrewCell);
+		if (word.translation !== undefined) {
+			const translationCell = document.createElement('td');
+			translationCell.innerText = word.translation;
+			row.appendChild(translationCell);
+		}
+		resultsTable.appendChild(row);
+	}
 }

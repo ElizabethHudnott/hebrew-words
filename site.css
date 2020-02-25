@@ -1,6 +1,15 @@
+:root {
+	--required-color: #91cf60;
+	--permitted-color: #ffffbf;
+}
+
 @font-face {
 	font-family: 'SBL Hebrew';
 	src: 'sbl-hebrew.ttf';
+}
+
+.fit-content {
+	width: fit-content;
 }
 
 .ml-05 {
@@ -10,6 +19,14 @@
 .hebrew {
 	font-family: 'SBL Hebrew';
 	font-size: 150%;
+}
+
+button[data-toggle=tristate-button][aria-pressed=mixed] {
+	background-color: var(--permitted-color);
+}
+
+button[data-toggle=tristate-button][aria-pressed=true] {
+	background-color: var(--required-color);
 }
 
 .btn-toolbar>.border {
