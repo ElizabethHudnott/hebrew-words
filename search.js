@@ -211,7 +211,7 @@ let selectedWords = [];
 
 function parseFile(content) {
 	words = [];
-	const lineFormat = /^(\p{Script=Hebrew}+)?(?:\t+(.*))?\n/muy;
+	const lineFormat = /^([\u05b0-\u05f4,.!?"]+)?(?:\t+(.*))?\n/muy;
 	let match;
 	while ((match = lineFormat.exec(content)) !== null) {
 		if (match[1] !== undefined) {
@@ -325,6 +325,11 @@ function showResults() {
 }
 
 function downloadWords(url) {
+	const escapedURL = url.replace(/[/.]/g, '\\$&');
+	const option = document.getElementById('words-url').querySelector(`[value=${escapedURL}]`);
+	const title = option === null ? url : option.innerText.trim();
+	const alertDiv = document.getElementById('word-source-alert');
+
 	const request = new XMLHttpRequest();
 	request.open('GET', url);
 	request.timeout = 60000;
@@ -332,6 +337,9 @@ function downloadWords(url) {
 	request.addEventListener('load', function (event) {
 		if (request.status < 400) {
 			parseFile(request.response);
+			alertDiv.classList.remove('alert-danger');
+			alertDiv.innerText = `Success! Loaded ${title}.`;
+			alertDiv.classList.add('alert-success', 'show');
 		} else {
 			
 		}
