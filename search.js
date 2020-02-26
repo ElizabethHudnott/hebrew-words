@@ -115,6 +115,33 @@ symbolMap.set('.', PUNCTUATION);
 symbolMap.set('?', PUNCTUATION);
 //symbolMap.set('', );
 
+/**	Mappings between characters that need to be escaped in HTML code (to prevent cross-site
+	scripting attacks) and their corresponding escape sequences, i.e. HTML character entities.
+	@readonly
+*/
+const ESCAPE_MAP = Object.freeze({
+	'&': '&amp;',
+	'<': '&lt;',
+	'>': '&gt;',
+	'"': '&quot;',
+	"'": '&#39;'
+});
+
+/**	Escapes a string so that any HTML code contained within it is converted into plain
+	text.
+	@param {(string|undefined)} input The text to make safe.
+*/
+function escapeHTML(input) {
+	'use strict';
+	if (input !== undefined) {
+		return String(input).replace(/[&<>"']/g, function (match) {
+			return ESCAPE_MAP[match];
+		});
+	} else {
+		return input;
+	}
+}
+
 function parseWord(word) {
 	const chars = word.normalize('NFD').split('');
 	let  letters = [];
@@ -308,16 +335,16 @@ function selectWords() {
 const resultsTable = document.getElementById('results');
 
 function showResults() {
-	resultsTable.innerText = '';
+	resultsTable.innerHTML = '';
 	for (let word of selectedWords) {
 		const row = document.createElement('tr');
 		const hebrewCell = document.createElement('td');
 		hebrewCell.classList.add('hebrew');
-		hebrewCell.innerText = word.hebrewText;
+		hebrewCell.innerHTML = word.hebrewText;
 		row.appendChild(hebrewCell);
 		if (word.translation !== undefined) {
 			const translationCell = document.createElement('td');
-			translationCell.innerText = word.translation;
+			translationCell.innerHTML = escapeHTML(word.translation);
 			row.appendChild(translationCell);
 		}
 		resultsTable.appendChild(row);
@@ -327,7 +354,7 @@ function showResults() {
 function downloadWords(url) {
 	const escapedURL = url.replace(/[/.]/g, '\\$&');
 	const option = document.getElementById('words-url').querySelector(`[value=${escapedURL}]`);
-	const title = option === null ? url : option.innerText.trim();
+	const title = option === null ? escapeHTML(url) : option.innerHTML.trim();
 	const alertDiv = document.getElementById('word-source-alert');
 
 	const request = new XMLHttpRequest();
@@ -338,7 +365,7 @@ function downloadWords(url) {
 		if (request.status < 400) {
 			parseFile(request.response);
 			alertDiv.classList.remove('alert-danger');
-			alertDiv.innerText = `Success! Loaded ${title}.`;
+			alertDiv.innerHTML = `Success! Loaded ${title}.`;
 			alertDiv.classList.add('alert-success', 'show');
 		} else {
 			
