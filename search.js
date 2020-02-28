@@ -106,6 +106,7 @@ symbolMap.set('ׇ', KAMATZ_KATAN);
 symbolMap.set('ֹ',  CHOLAM);
 symbolMap.set('ֺ',  CHOLAM);
 symbolMap.set('ֻ', KUBUTZ);
+symbolMap.set('ְ',  SHVA);
 symbolMap.set('ֲ', CHATAF_PATACH);
 symbolMap.set('ֱ', CHATAF_SEGOL);
 symbolMap.set('ֳ', CHATAF_KAMATZ);
@@ -168,17 +169,21 @@ function parseWord(word) {
 					newLetters.push(nextNextNext + 1, DAGESH, nextLetter);
 					i += 4;
 				} else {
+					// Letter, VOWEL, DAGESH
 					newLetters.push(thisLetter, DAGESH, nextLetter);
 					i += 3;
 				}
 			} else if (nextNext === SIN_DOT || nextNext === SHIN_DOT) {
+				// SIN_OR_SHIN, VOWEL, SIN_DOT/SHIN_DOT
 				newLetters.push(nextNext + 1, nextLetter);
 				i += 3;
 			} else {
+				// Letter, VOWEL, something
 				newLetters.push(thisLetter, nextLetter);
 				i += 2;
 			}
 		} else if (nextNext === SIN_DOT && next === DAGESH) {
+			// SIN_OR_SHIN, DAGESH, SIN_DOT
 			newLetters.push(SIN, DAGESH, CHOLAM);
 		} else {
 			newLetters.push(thisLetter);
@@ -273,6 +278,11 @@ function deleteAll(set, values) {
 }
 
 {
+	const allConsonantsButton = document.getElementById('btn-all-consonants');
+	const tristateButtons = document.querySelectorAll('button[data-toggle=tristate-button]');
+	const numConsonants = 32;
+	let numConsonantsSelected = 0;
+
 	function tristateToggle() {
 		const currentValue = this.getAttribute('aria-pressed');
 		const classList = this.classList;
@@ -284,6 +294,13 @@ function deleteAll(set, values) {
 			classList.add('bg-permitted');
 			addAll(permitted, symbols);
 			filterWords(words);
+			if (parseInt(symbols[0]) <= TAV_WITH_DAGESH) {
+				numConsonantsSelected++;
+				if (numConsonantsSelected === numConsonants) {
+					allConsonantsButton.setAttribute('aria-pressed', 'true');
+					allConsonantsButton.classList.add('bg-permitted');
+				}
+			}
 			break;
 		case 'mixed':
 			this.setAttribute('aria-pressed', 'true');
@@ -298,13 +315,48 @@ function deleteAll(set, values) {
 			deleteAll(permitted, symbols);
 			deleteAll(required, symbols);
 			filterWords(filteredWords);
+			if (parseInt(symbols[0]) <= TAV_WITH_DAGESH) {
+				numConsonantsSelected--;
+				allConsonantsButton.setAttribute('aria-pressed', 'false');
+				allConsonantsButton.classList.remove('bg-permitted');
+			}
 		}
 	}
 
-	const tristateButtons = document.querySelectorAll('button[data-toggle=tristate-button]');
 	for (let button of tristateButtons) {
 		button.addEventListener('click', tristateToggle);
 	}
+
+	allConsonantsButton.addEventListener('click', function (event) {
+		if (numConsonantsSelected === numConsonants) {
+			for (let button of tristateButtons) {
+				const symbols = button.dataset.symbols.split(' ');
+				if (parseInt(symbols[0]) <= TAV_WITH_DAGESH) {
+					button.setAttribute('aria-pressed', 'false');
+					button.classList.remove('bg-permitted', 'bg-required');
+					deleteAll(permitted, symbols);
+					deleteAll(required, symbols);
+				}
+			}
+			numConsonantsSelected = 0;
+			this.setAttribute('aria-pressed', 'false');
+			this.classList.remove('bg-permitted');
+		} else {
+			for (let button of tristateButtons) {
+				const symbols = button.dataset.symbols.split(' ');
+				const pressed = button.getAttribute('aria-pressed');
+				if (parseInt(symbols[0]) <= TAV_WITH_DAGESH && pressed === 'false') {
+					button.setAttribute('aria-pressed', 'mixed');
+					button.classList.add('bg-permitted');
+					addAll(permitted, symbols);
+				}
+			}
+			numConsonantsSelected = numConsonants;
+			this.setAttribute('aria-pressed', 'true');
+			this.classList.add('bg-permitted');
+			filterWords(words);
+		}
+	});
 }
 
 function filterWords(pool) {
@@ -352,32 +404,47 @@ function showResults() {
 }
 
 function downloadWords(url) {
-	const escapedURL = url.replace(/[/.]/g, '\\$&');
-	const option = document.getElementById('words-url').querySelector(`[value=${escapedURL}]`);
-	const title = option === null ? escapeHTML(url) : option.innerHTML.trim();
 	const alertDiv = document.getElementById('word-source-alert');
+	alertDiv.classList.remove('show');
+
+	const escapedURL = escapeHTML(url);
+	const escapedURL2 = url.replace(/[/.]/g, '\\$&');
+	const option = document.getElementById('words-url').querySelector(`[value=${escapedURL2}]`);
+	let title;
+	if (option === null) {
+		title = escapedURL + ' ';
+	} else {
+		title = option.innerHTML.trim();
+	}
 
 	const request = new XMLHttpRequest();
 	request.open('GET', url);
 	request.timeout = 60000;
 
+	function alertFailure(message) {
+		alertDiv.classList.remove('alert-success');
+		const escapedMessage = escapeHTML(message);
+		alertDiv.innerHTML = `Failure. Unable to download <a href="${escapedURL}" target="_blank" class="alert-link">${escapedURL}</a> \ud83d\ude22 ${escapedMessage}`;
+		alertDiv.classList.add('alert-danger', 'show');		
+	}
+
 	request.addEventListener('load', function (event) {
 		if (request.status < 400) {
 			parseFile(request.response);
 			alertDiv.classList.remove('alert-danger');
-			alertDiv.innerHTML = `Success! Loaded ${title}.`;
+			alertDiv.innerHTML = `Success! Loaded <a href="${escapedURL}" target="_blank" class="alert-link">${title}</a>.`;
 			alertDiv.classList.add('alert-success', 'show');
 		} else {
-			
+			alertFailure(request.status + ' - ' + request.statusText);
 		}
 	});
 	
 	request.addEventListener('error', function (event) {
-		
+		alertFailure('Network Error.');
 	});
 
 	request.addEventListener('timeout', function (event) {
-		
+		alertFailure('Timeout.');
 	});
 
 	request.send();
