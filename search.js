@@ -207,7 +207,7 @@ function parseWord(word) {
 		) {
 			newLetters.push(thisLetter + 1);
 			i += 2;
-		} else if (thisLetter === VAV && nextLetter === CHOLAM) {
+		} else if (thisLetter === VAV && nextLetter === CHOLAM && i > 0) {
 				newLetters.push(CHOLAM_VAV);
 				i += 2;
 		} else if (thisLetter === VAV && nextLetter === DAGESH) {
@@ -216,6 +216,9 @@ function parseWord(word) {
 		} else if (nextLetter === SIN_DOT || nextLetter === SHIN_DOT) {
 			newLetters.push(thisLetter + 1);
 			i += 2;
+		} else if (thisLetter === SHVA && newLetters.length === 1) {
+			newLetters.push(INITIAL_SHVA);
+			i++;
 		} else {
 			// TODO handle cholam implied by shin
 			newLetters.push(thisLetter);
