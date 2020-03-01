@@ -45,6 +45,10 @@ main h3 {
 	margin-left: 0.12rem !important;
 }
 
+.narrow {
+	max-width: 400px;
+}
+
 .hebrew {
 	font-family: 'SBL Hebrew';
 	font-size: 150%;
@@ -70,4 +74,10 @@ main h3 {
 
 .btn-toolbar>.border {
 	margin-left: 3px;
+}
+
+.nav-pills .nav-link.active {
+	background-color: var(--required-color);
+	font-weight: bold;
+	text-shadow: 1px 1px Black;
 }

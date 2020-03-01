@@ -114,6 +114,7 @@ symbolMap.set(' ', PUNCTUATION);
 symbolMap.set(',', PUNCTUATION);
 symbolMap.set('.', PUNCTUATION);
 symbolMap.set('?', PUNCTUATION);
+symbolMap.set('”', PUNCTUATION);
 //symbolMap.set('', );
 
 /**	Mappings between characters that need to be escaped in HTML code (to prevent cross-site
@@ -206,6 +207,12 @@ function parseWord(word) {
 		) {
 			newLetters.push(thisLetter + 1);
 			i += 2;
+		} else if (thisLetter === VAV && nextLetter === CHOLAM) {
+				newLetters.push(CHOLAM_VAV);
+				i += 2;
+		} else if (thisLetter === VAV && nextLetter === DAGESH) {
+			newLetters.push(SHURUK);
+			i += 2;				
 		} else if (nextLetter === SIN_DOT || nextLetter === SHIN_DOT) {
 			newLetters.push(thisLetter + 1);
 			i += 2;
@@ -293,7 +300,7 @@ function deleteAll(set, values) {
 			this.setAttribute('aria-pressed', 'mixed');
 			classList.add('bg-permitted');
 			addAll(permitted, symbols);
-			filterWords(words);
+			filterWords();
 			if (parseInt(symbols[0]) <= TAV_WITH_DAGESH) {
 				numConsonantsSelected++;
 				if (numConsonantsSelected === numConsonants) {
@@ -307,14 +314,14 @@ function deleteAll(set, values) {
 			classList.remove('bg-permitted');
 			classList.add('bg-required');
 			addAll(required, symbols);
-			filterWords(words);
+			filterWords();
 			break;
 		default: 
 			this.setAttribute('aria-pressed', 'false');
 			classList.remove('bg-required');
 			deleteAll(permitted, symbols);
 			deleteAll(required, symbols);
-			filterWords(filteredWords);
+			filterWords();
 			if (parseInt(symbols[0]) <= TAV_WITH_DAGESH) {
 				numConsonantsSelected--;
 				allConsonantsButton.setAttribute('aria-pressed', 'false');
@@ -329,9 +336,10 @@ function deleteAll(set, values) {
 
 	allConsonantsButton.addEventListener('click', function (event) {
 		if (numConsonantsSelected === numConsonants) {
+			// Disable all
 			for (let button of tristateButtons) {
 				const symbols = button.dataset.symbols.split(' ');
-				if (parseInt(symbols[0]) <= TAV_WITH_DAGESH) {
+				if (parseInt(symbols[0]) <= DAGESH) {
 					button.setAttribute('aria-pressed', 'false');
 					button.classList.remove('bg-permitted', 'bg-required');
 					deleteAll(permitted, symbols);
@@ -341,7 +349,11 @@ function deleteAll(set, values) {
 			numConsonantsSelected = 0;
 			this.setAttribute('aria-pressed', 'false');
 			this.classList.remove('bg-permitted');
+			filteredWords = [];
+			selectedWords = [];
+			showResults();
 		} else {
+			// Enable all
 			for (let button of tristateButtons) {
 				const symbols = button.dataset.symbols.split(' ');
 				const pressed = button.getAttribute('aria-pressed');
@@ -354,14 +366,14 @@ function deleteAll(set, values) {
 			numConsonantsSelected = numConsonants;
 			this.setAttribute('aria-pressed', 'true');
 			this.classList.add('bg-permitted');
-			filterWords(words);
+			filterWords();
 		}
 	});
 }
 
-function filterWords(pool) {
+function filterWords() {
 	filteredWords = [];
-	for (let word of pool) {
+	for (let word of words) {
 		let hasRequired = required.size === 0;
 		let okay = true;
 		for (let symbol of word.parseResult) {
@@ -380,9 +392,24 @@ function filterWords(pool) {
 }
 
 function selectWords() {
-	selectedWords = filteredWords;
+	const numMatching = filteredWords.length;
+	let numToSelect = parseInt(document.getElementById('num-selected-words').value);
+	if (!(numToSelect > 0) || numToSelect > numMatching) {
+		numToSelect = numMatching;
+	}
+	for (let i = 0; i < numToSelect; i++) {
+		const numAvailable = numMatching - i;
+		const index = Math.floor(Math.random() * numAvailable) + i;
+		const temp = filteredWords[i];
+		filteredWords[i] = filteredWords[index];
+		filteredWords[index] = temp;
+	}
+	selectedWords = filteredWords.slice(0, numToSelect);
 	showResults();
 }
+
+document.getElementById('num-selected-words').addEventListener('input', selectWords);
+document.getElementById('btn-select-words').addEventListener('click', selectWords);
 
 const resultsTable = document.getElementById('results');
 
@@ -391,16 +418,19 @@ function showResults() {
 	for (let word of selectedWords) {
 		const row = document.createElement('tr');
 		const hebrewCell = document.createElement('td');
-		hebrewCell.classList.add('hebrew');
+		hebrewCell.classList.add('hebrew', 'align-middle');
 		hebrewCell.innerHTML = word.hebrewText;
 		row.appendChild(hebrewCell);
 		if (word.translation !== undefined) {
 			const translationCell = document.createElement('td');
+			translationCell.classList.add('align-middle');
 			translationCell.innerHTML = escapeHTML(word.translation);
 			row.appendChild(translationCell);
 		}
 		resultsTable.appendChild(row);
 	}
+	document.getElementById('num-words-shown').innerHTML = selectedWords.length;
+	document.getElementById('num-words-matched').innerHTML = filteredWords.length;
 }
 
 function downloadWords(url) {
@@ -431,8 +461,9 @@ function downloadWords(url) {
 	request.addEventListener('load', function (event) {
 		if (request.status < 400) {
 			parseFile(request.response);
+			const numWords = words.length;
 			alertDiv.classList.remove('alert-danger');
-			alertDiv.innerHTML = `Success! Loaded <a href="${escapedURL}" target="_blank" class="alert-link">${title}</a>.`;
+			alertDiv.innerHTML = `Success! Loaded ${numWords} words from <a href="${escapedURL}" target="_blank" class="alert-link">${title}</a>.`;
 			alertDiv.classList.add('alert-success', 'show');
 		} else {
 			alertFailure(request.status + ' - ' + request.statusText);
