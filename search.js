@@ -39,15 +39,13 @@ const TAV_WITH_DAGESH = 35;
 const DAGESH = 36;
 const PUNCTUATION = 99;
 const VOWEL_MARK= 200;
-const HE_MATER = 4;
-const ALEPH_MATER = 5;
 const PATACH	= 210;
 const STOLEN_PATACH = 110;
 const AI		= 111;
 const CHATAF_PATACH = 211;
 const KAMATZ	= 220;
-const KAMATZ_YOD_VAV = 121;
-const KAMATZ_HE	= 124;
+const KAMATZ_HE	= 121;
+const KAMATZ_YOD_VAV = 122;
 const SEGOL		= 230;
 const SEGOL_YOD	= 130;
 const CHATAF_SEGOL = 231;
@@ -65,6 +63,9 @@ const SHURUK	= 180;
 const UI		= 181;
 const SHVA		= 290;
 const INITIAL_SHVA = 190;
+const FINAL_SHVA = 191;
+const HE_MATER = 198;
+const ALEPH_MATER = 199;
 
 const symbolMap = new Map();
 symbolMap.set('א', ALEPH);
@@ -225,7 +226,7 @@ function parseWord(word) {
 			i += 2;				
 		} else if (nextLetter === SIN_DOT || nextLetter === SHIN_DOT) {
 			// Sin and Shin
-			newLetters.push(thisLetter + 1);
+			newLetters.push(nextLetter + 1);
 			i += 2;
 		} else if (thisLetter === SHVA && newLetters.length === 1) {
 			// Initial Sh'va
@@ -239,6 +240,27 @@ function parseWord(word) {
 	}
 	if (i === letters.length - 1) {
 		newLetters.push(letters[letters.length - 1]);
+	}
+	const numLetters = newLetters.length;
+	const finalLetter = newLetters[numLetters - 1];
+	const penultimate = newLetters[numLetters - 2];
+	if (finalLetter === PATACH) {
+		// Stolen Patach
+		if (penultimate === CHET) {
+			newLetters[numLetters - 1] = CHET;
+			newLetters[numLetters - 2] = STOLEN_PATACH;
+		} else if (penultimate === DAGESH && newLetter[numLetters - 3] === HE) {
+			newLetters[numLetters - 1] = DAGESH;
+			newLetters[numLetters - 2] = HE;
+			newLetters[numLetters - 3] = STOLEN_PATACH;
+		}
+	} else if (finalLetter === HE && penultimate === KAMATZ) {
+		// Final Kamatz He
+		newLetters[numLetters - 2] = KAMATZ_HE;
+		newLetters.splice(numLetters - 1, 1);
+	} else if (finalLetter === SHVA) {
+		// Final Sh'va
+		newLetters[numLetters - 1] = FINAL_SHVA;
 	}
 	letters = newLetters;
 	return letters;
@@ -309,6 +331,7 @@ function deleteAll(set, values) {
 		const currentValue = this.getAttribute('aria-pressed');
 		const classList = this.classList;
 		const symbols = this.dataset.symbols.split(' ');
+		const firstSymbol = parseInt(symbols[0]);
 
 		switch (currentValue) {
 		case 'false':
@@ -316,12 +339,14 @@ function deleteAll(set, values) {
 			classList.add('bg-permitted');
 			addAll(permitted, symbols);
 			filterWords();
-			if (parseInt(symbols[0]) <= TAV_WITH_DAGESH) {
+			if (firstSymbol <= TAV_WITH_DAGESH) {
 				numConsonantsSelected++;
 				if (numConsonantsSelected === numConsonants) {
 					allConsonantsButton.setAttribute('aria-pressed', 'true');
 					allConsonantsButton.classList.add('bg-permitted');
 				}
+			} else if (firstSymbol === KAMATZ_KATAN) {
+				document.getElementById('kamatz-katan-controls').classList.add('show');
 			}
 			break;
 		case 'mixed':
@@ -337,10 +362,12 @@ function deleteAll(set, values) {
 			deleteAll(permitted, symbols);
 			deleteAll(required, symbols);
 			filterWords();
-			if (parseInt(symbols[0]) <= TAV_WITH_DAGESH) {
+			if (firstSymbol <= TAV_WITH_DAGESH) {
 				numConsonantsSelected--;
 				allConsonantsButton.setAttribute('aria-pressed', 'false');
 				allConsonantsButton.classList.remove('bg-permitted');
+			} else if (firstSymbol === KAMATZ_KATAN) {
+				document.getElementById('kamatz-katan-controls').classList.remove('show');
 			}
 		}
 	}
@@ -430,11 +457,17 @@ const resultsTable = document.getElementById('results');
 
 function showResults() {
 	resultsTable.innerHTML = '';
+	const hideKamatzKatan = !document.getElementById('show-kamatz-katan').checked;
+	const kamatzKatanRE = /ׇ/g
 	for (let word of selectedWords) {
 		const row = document.createElement('tr');
 		const hebrewCell = document.createElement('td');
 		hebrewCell.classList.add('hebrew', 'align-middle');
-		hebrewCell.innerHTML = word.hebrewText;
+		let wordText = word.hebrewText;
+		if (hideKamatzKatan) {
+			wordText = wordText.replace(kamatzKatanRE, 'ָ');
+		}
+		hebrewCell.innerHTML = wordText;
 		row.appendChild(hebrewCell);
 		if (word.translation !== undefined) {
 			const translationCell = document.createElement('td');
@@ -447,6 +480,8 @@ function showResults() {
 	document.getElementById('num-words-shown').innerHTML = selectedWords.length;
 	document.getElementById('num-words-matched').innerHTML = filteredWords.length;
 }
+
+document.getElementById('show-kamatz-katan').addEventListener('input', showResults);
 
 function downloadWords(url) {
 	const alertDiv = document.getElementById('word-source-alert');

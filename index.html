@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<title>Hebrew Words Database</title>
 	<link rel="icon" href="img/favicon.png">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
@@ -103,7 +104,7 @@
 					<button type="button" class="btn btn-light hebrew ml-05" data-toggle="tristate-button" data-symbols="35" aria-pressed="false" title="Tav with dagesh">תּ</button>
 					<button type="button" class="btn btn-light hebrew" data-toggle="tristate-button" data-symbols="34" aria-pressed="false" title="Tav without dagesh">ת</button>
 				</div>
-				<button type="button" class="btn btn-light hebrew m-1" data-toggle="tristate-button" data-symbols="36" aria-pressed="false" title="Doubling dagesh or Mappiq">ּ</button>
+				<button type="button" class="btn btn-light hebrew m-1" data-toggle="tristate-button" data-symbols="36" aria-pressed="false" title="Doubling Dagesh or Mappiq">לּ, הּ</button>
 				<button type="button" class="btn btn-sm btn-light" id="btn-all-consonants" aria-pressed="false">All Letters</button>
 			</div>
 
@@ -112,9 +113,9 @@
 				<div class="border mb-2">
 					<div class="btn-group flex-row-reverse m-1" role="group">
 						<button type="button" class="btn btn-light hebrew ml-05" data-toggle="tristate-button" data-symbols="210" aria-pressed="false" title="Patach">בַ</button>
-						<button type="button" class="btn btn-light hebrew ml-05" data-toggle="tristate-button" data-symbols="110" aria-pressed="false" title="Chet with Stolen Patach">חַ</button>
+						<button type="button" class="btn btn-light hebrew ml-05" data-toggle="tristate-button" data-symbols="110" aria-pressed="false" title="Stolen Patach (except with Ayin)">חַ</button>
 						<button type="button" class="btn btn-light hebrew ml-05" data-toggle="tristate-button" data-symbols="220" aria-pressed="false" title="Qamats Gadol">בָ</button>
-						<button type="button" class="btn btn-light hebrew" data-toggle="tristate-button" data-symbols="124" aria-pressed="false" title="Qamats He">בָה</button>
+						<button type="button" class="btn btn-light hebrew" data-toggle="tristate-button" data-symbols="121" aria-pressed="false" title="Final Qamats He">בָה</button>
 					</div>
 					<div class="text-center">
 						<small>A-Type</small>
@@ -160,8 +161,9 @@
 				</div>
 				<div class="border mb-2">
 					<div class="btn-group flex-row-reverse m-1" role="group">
-						<button type="button" class="btn btn-sm btn-light ml-05" data-toggle="tristate-button" data-symbols="190" aria-pressed="false">Initial Sh'va</button>
-						<button type="button" class="btn btn-light hebrew ml-05" data-toggle="tristate-button" data-symbols="290" aria-pressed="false" title="Non-Initial Sh'va">בְ</button>
+						<button type="button" class="btn btn-sm btn-light ml-05" data-toggle="tristate-button" data-symbols="190" aria-pressed="false" title="Initial Sh'va">Initial</button>
+						<button type="button" class="btn btn-sm btn-light ml-05" data-toggle="tristate-button" data-symbols="290" aria-pressed="false" title="Middle Sh'va">Middle</button>
+						<button type="button" class="btn btn-sm btn-light ml-05" data-toggle="tristate-button" data-symbols="191" aria-pressed="false" title="Final Sh'va">Final</button>
 						<button type="button" class="btn btn-light hebrew" data-toggle="tristate-button" data-symbols="211 261 231" aria-pressed="false" title="Chataf Vowels">חֳ</button>
 					</div>
 					<div class="text-center">
@@ -180,8 +182,11 @@
 				</div>
 				<div class="border mb-2">
 					<div class="btn-group flex-row-reverse m-1" role="group">
-						<!-- Patach He, Patach Aleph, Qamats Yod Vav, Qamats Aleph, Segol He, Segol Aleph, Tsere He, Tsere Aleph, Cholam He, Cholam Aleph, Shuruq He, Shuruq Aleph -->
-						<button type="button" class="btn btn-light hebrew" data-toggle="tristate-button" data-symbols="114 115 121 125 134 135 144 145 174 175 184 185" aria-pressed="false" title="Quiescent Aleph, He Mater, etc.">בֹא</button>
+						<!-- Patach He, Segol He, Tsere He, Cholam He, Shuruq He -->
+						<button type="button" class="btn btn-light hebrew" data-toggle="tristate-button" data-symbols="198" aria-pressed="false" title="Mater lectionis using He">בֶה</button>
+						<!-- Patach Aleph, Qamats Aleph, Segol Aleph, Tsere Aleph, Cholam Aleph, Shuruq Aleph -->
+						<button type="button" class="btn btn-light hebrew" data-toggle="tristate-button" data-symbols="199" aria-pressed="false" title="Quiescent Aleph">בֹא</button>
+						<button type="button" class="btn btn-light hebrew" data-toggle="tristate-button" data-symbols="122" aria-pressed="false" title="av">בָיו</button>
 					</div>
 					<div class="text-center">
 						<small>Misc.</small>
@@ -236,7 +241,7 @@
 
 			<h2>Practice Words</h2>
 			<div class="narrow mx-auto">
-				<div class="row align-items-center mb-3">
+				<div class="row align-items-center mb-2">
 					<div class="col-6">
 						<label for="num-selected-words" class="my-0">Randomly choose up to:</label>
 					</div>
@@ -247,7 +252,15 @@
 						words.
 					</div>
 				</div>
-				<div class="row d-print-none">
+				<div class="row mb-2 fade" id="kamatz-katan-controls">
+					<div class="col-12 text-center">
+						<div class="form-check">
+							<input class="form-check-input" type="checkbox" id="show-kamatz-katan" checked>
+							<label class="form-check-label" for="show-kamatz-katan">Distinguish Qamats Qatan</label>
+						</div>
+					</div>
+				</div>
+				<div class="row mt-2 d-print-none">
 					<div class="col-12 text-center">
 						<button id="btn-select-words" type="button" class="btn btn-secondary">
 							Choose Again
