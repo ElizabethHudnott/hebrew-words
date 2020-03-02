@@ -144,6 +144,10 @@ function escapeHTML(input) {
 	}
 }
 
+function isVowel(symbol) {
+	return symbol > VOWEL_MARK;
+}
+
 function parseWord(word) {
 	const chars = word.normalize('NFD').split('');
 	let  letters = [];
@@ -160,7 +164,7 @@ function parseWord(word) {
 	while (i < letters.length - 2) {
 		const thisLetter = letters[i];
 		const nextLetter = letters[i + 1];
-		const nextIsVowel = nextLetter > VOWEL_MARK;
+		const nextIsVowel = isVowel(nextLetter);
 		const nextNext = letters[i + 2];
 		if (nextIsVowel) {
 			if (nextNext === DAGESH) {
@@ -202,21 +206,29 @@ function parseWord(word) {
 	while (i < letters.length - 1) {
 		const thisLetter = letters[i];
 		const nextLetter = letters[i + 1];
+		const nextNext = letters[i + 2];
+		const nextNextIsVowel = isVowel(nextNext);
+
 		if (nextLetter === DAGESH &&
 			(thisLetter === VET || thisLetter === KHAF || thisLetter === KHAF_SOFIT || thisLetter === FEI || thisLetter === TAV )
 		) {
+			// Bet, Kaf, Kaf Sofit, Pei, Tav with dagesh
 			newLetters.push(thisLetter + 1);
 			i += 2;
-		} else if (thisLetter === VAV && nextLetter === CHOLAM && i > 0) {
-				newLetters.push(CHOLAM_VAV);
-				i += 2;
-		} else if (thisLetter === VAV && nextLetter === DAGESH) {
+		} else if (thisLetter === VAV && nextLetter === CHOLAM) {
+			// Cholam Vav
+			newLetters.push(CHOLAM_VAV);
+			i += 2;
+		} else if (thisLetter === VAV && nextLetter === DAGESH && !nextNextIsVowel) {
+			// Shuruk
 			newLetters.push(SHURUK);
 			i += 2;				
 		} else if (nextLetter === SIN_DOT || nextLetter === SHIN_DOT) {
+			// Sin and Shin
 			newLetters.push(thisLetter + 1);
 			i += 2;
 		} else if (thisLetter === SHVA && newLetters.length === 1) {
+			// Initial Sh'va
 			newLetters.push(INITIAL_SHVA);
 			i++;
 		} else {
