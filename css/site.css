@@ -12,6 +12,10 @@ body {
 	background-color: #801000;
 }
 
+a {
+	color: hsl(211, 100%, 46%, 1);
+}
+
 #container {
 	background-color: White;
 	padding-bottom: 0.5rem;
@@ -87,6 +91,17 @@ nav {
 	background-color: unset;
 	padding: 0;
 	margin: 0;
+}
+
+@media (max-width: 767px) {
+	.container {
+		max-width: 100%;
+	}
+
+	.display-3 {
+		font-size: 3rem;
+	}
+
 }
 
 .display-3 [lang="he"] {

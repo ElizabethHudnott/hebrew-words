@@ -5,7 +5,9 @@ function playAudio(event) {
 }
 
 for (let element of document.querySelectorAll('[data-audio]')) {
+	element.classList.add('align-middle');
 	const button = document.createElement('BUTTON');
+	button.setAttribute('aria-label', 'Play');
 	button.classList.add('btn', 'rounded-circle', 'p-0');
 	const icon = new Image();
 	icon.src = '../img/control_play.png';
