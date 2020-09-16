@@ -462,7 +462,8 @@ function showResults() {
 	for (let word of selectedWords) {
 		const row = document.createElement('tr');
 		const hebrewCell = document.createElement('td');
-		hebrewCell.classList.add('hebrew', 'align-middle');
+		hebrewCell.lang = 'he';
+		hebrewCell.classList.add('align-middle');
 		let wordText = word.hebrewText;
 		if (hideKamatzKatan) {
 			wordText = wordText.replace(kamatzKatanRE, 'ָ');
