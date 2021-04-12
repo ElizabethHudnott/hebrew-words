@@ -12,8 +12,10 @@
 	<link rel="icon" href="img/favicon.png">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style>
-		.btn {
-			min-width: 108px;
+		@media (min-width: 576px) {
+			.btn {
+				min-width: 108px;
+			}
 		}
 	</style>
 </head>
@@ -56,7 +58,7 @@
 					</label>
 				</div>
 			</div>
-			<div class="form-group" id="hebrew-input-options">
+			<div class="form-group collapse show" id="hebrew-input-options">
 				<div class="form-check">
 					<input type="checkbox" class="form-check-input" id="virtual-keyboard" checked>
 					<label class="form-check-label" for="virtual keyboard">
@@ -68,10 +70,10 @@
 			<details open class="form-group">
 				<summary>On-Screen Keyboard</summary>
 			</details>
-			<div class="form-group d-flex">
-				<button type="submit" class="btn btn-primary mr-2" id="btn-submit">Transcode</button>
-				<button type="button" class="btn btn-secondary mr-2" id="btn-paste">Paste</button>
-				<button type="button" class="btn btn-secondary" id="btn-upload">Choose File</button>
+			<div class="d-flex flex-wrap">
+				<button type="submit" class="btn btn-primary mr-2 mb-2" id="btn-submit">Transcode</button>
+				<button type="button" class="btn btn-secondary mr-2 mb-2" id="btn-paste">Paste</button>
+				<button type="button" class="btn btn-secondary mb-2" id="btn-upload">Choose File</button>
 				<input type="file" hidden id="upload-file" accept="text/html,text/plain,.brf">
 			</div>
 			<div class="form-group">
@@ -111,6 +113,22 @@
 					<div class="form-check">
 						<input type="checkbox" class="form-check-input" id="show-meteg" checked>
 						<label class="form-check-label" for="show-dagesh">Include meteg</label>
+					</div>
+				</div>
+				<div class="form-row mb-2">
+					<label class="col-7 col-sm-4 col-md-3 col-lg-2 col-form-label" for="chars-per-line">
+						Characters per line
+					</label>
+					<div class="col-auto">
+						<input type="number" min="1" max="99" value="40" class="form-control" id="chars-per-line">
+					</div>
+				</div>
+				<div class="form-row form-group">
+					<label class="col-7 col-sm-4 col-md-3 col-lg-2 col-form-label" for="lines-per-page">
+						Lines per page
+					</label>
+					<div class="col-auto">
+						<input type="number" min="1" max="99" value="25" class="form-control" id="lines-per-page">
 					</div>
 				</div>
 			</div>

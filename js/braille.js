@@ -69,7 +69,9 @@ unicodeBraille.set(ALEPH_MATER, '⠈');
 let inputType = 'sighted';
 let outputType = 'he-Brai';
 
-document.getElementById('input-script-sighted').addEventListener('input', function (event) {
+
+function sightedToBraille(event) {
+	$('#hebrew-input-options').collapse('show');
 	$('#hebrew-output-options').collapse('show');
 	const output = document.getElementById('output');
 	output.innerHTML = '';
@@ -79,9 +81,10 @@ document.getElementById('input-script-sighted').addEventListener('input', functi
 	input.lang = 'he';
 	input.dir = 'rtl';
 	inputType = 'sighted';
-});
+}
 
 function brailleToSighted(event) {
+	$('#hebrew-input-options').collapse('hide');
 	$('#hebrew-output-options').collapse('hide');
 	const output = document.getElementById('output');
 	output.innerHTML = '';
@@ -93,6 +96,7 @@ function brailleToSighted(event) {
 	inputType = this.value;
 }
 
+document.getElementById('input-script-sighted').addEventListener('input', sightedToBraille);
 document.getElementById('input-script-brf').addEventListener('input', brailleToSighted);
 document.getElementById('input-script-english').addEventListener('input', brailleToSighted);
 
