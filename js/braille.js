@@ -66,6 +66,36 @@ unicodeBraille.set(HE_MATER, '⠓');
 unicodeBraille.set(ALEPH_MATER, '⠈');
 //unicodeBraille.set();
 
+let inputType = 'sighted';
+let outputType = 'he-Brai';
+
+document.getElementById('input-script-sighted').addEventListener('input', function (event) {
+	$('#hebrew-output-options').collapse('show');
+	const output = document.getElementById('output');
+	output.innerHTML = '';
+	output.lang = outputType === 'he-Brai' ? 'he-Brai' : '';
+	output.dir = 'ltr';
+	const input = document.getElementById('input-text');
+	input.lang = 'he';
+	input.dir = 'rtl';
+	inputType = 'sighted';
+});
+
+function brailleToSighted(event) {
+	$('#hebrew-output-options').collapse('hide');
+	const output = document.getElementById('output');
+	output.innerHTML = '';
+	output.lang = 'he';
+	output.dir = 'rtl';
+	const input = document.getElementById('input-text');
+	input.lang = '';
+	input.dir = 'ltr';
+	inputType = this.value;
+}
+
+document.getElementById('input-script-brf').addEventListener('input', brailleToSighted);
+document.getElementById('input-script-english').addEventListener('input', brailleToSighted);
+
 document.getElementById('btn-submit').addEventListener('click', function (event) {
 	event.preventDefault();
 	const intermediateRep = parseHebrew(document.getElementById('input-text').value);
@@ -73,9 +103,34 @@ document.getElementById('btn-submit').addEventListener('click', function (event)
 	for (let symbol of intermediateRep) {
 		output += unicodeBraille.get(symbol);
 	}
-	document.getElementById('output').innerHTML = output;
+	document.getElementById('output').innerHTML = escapeHTML(output);
 });
+
+{
+	const pasteButton = document.getElementById('btn-paste');
+	
+	if ('readText' in navigator.clipboard) {
+		pasteButton.addEventListener('click', function (event) {
+			navigator.clipboard.readText().then(text => {
+				document.getElementById('input-text').value = text;
+			}).catch(e => {
+				alert('Before you can use this feature you need to adjust your browser settings to grant this page permission to use the clipboard.');
+			});
+		});
+	} else {
+		pasteButton.remove();
+	}
+}
 
 document.getElementById('btn-upload').addEventListener('click', function (event) {
 	document.getElementById('upload-file').click();
 });
+
+document.getElementById('input-text').addEventListener('keydown', function (event) {
+	if (event.key === 'Enter' && !event.shiftKey && !event.ctrlKey) {
+		event.preventDefault();
+		document.getElementById('btn-submit').click();
+	}
+});
+
+$('.collapse').collapse({toggle: false});

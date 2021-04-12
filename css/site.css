@@ -116,12 +116,16 @@ nav {
 	margin-left: 3px;
 }
 
-.nav-pills .nav-link.active {
-	background-color: var(--required-color);
-	font-weight: bold;
-	text-shadow: 1px 1px Black;
+.form-control, .form-control:focus {
+	color: black;
 }
 
 .list-padded>li {
 	margin-bottom: 0.5rem;
+}
+
+.nav-pills .nav-link.active {
+	background-color: var(--required-color);
+	font-weight: bold;
+	text-shadow: 1px 1px Black;
 }
