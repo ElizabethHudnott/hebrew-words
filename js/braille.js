@@ -75,3 +75,7 @@ document.getElementById('btn-submit').addEventListener('click', function (event)
 	}
 	document.getElementById('output').innerHTML = output;
 });
+
+document.getElementById('btn-upload').addEventListener('click', function (event) {
+	document.getElementById('upload-file').click();
+});
