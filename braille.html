@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Hebrew Braille Transcoder</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+	<link rel="stylesheet" href="../css/site.css">
+	<script src="js/parse.js" defer></script>
+	<script src="js/braille.js" defer></script>
+	<link rel="icon" href="img/favicon.png">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		.btn {
+			min-width: 108px;
+		}
+	</style>
+</head>
+<body>
+	<div class="container" id="container">
+		<header class="jumbotron" id="header">
+			<h1 class="display-3">Hebrew Braille Transcoder</h1>
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb">
+					 <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+					 <li class="breadcrumb-item active" aria-current="page">Braille</li>
+				</ol>
+			</nav>
+		</header>
+		<main class="px-4">
+			<div class="form-group">
+				<label for="input-text">Input</label>
+				<textarea class="form-control" id="input-text" lang="he" dir="rtl"></textarea>
+			</div>
+			<div class="form-group">
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="input-script" id="input-script-sighted" value="sighted" checked>
+					<label class="form-check-label" for="input-script-sighted">
+						Sighted Hebrew
+					</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="input-script" id="input-script-brf" value="brf">
+					<label class="form-check-label" for="input-script-brf">
+						Hebrew Braille in BRF (Braille Ready Format)
+					</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="input-script" id="input-script-english" value="sighted">
+					<label class="form-check-label" for="input-script-english">
+						Hebrew Braille typed on an English Braille keyboard
+					</label>
+				</div>
+			</div>
+			<div class="form-group d-flex">
+				<button type="submit" class="btn btn-primary mr-2" id="btn-submit">Transcode</button>
+				<button type="button" class="btn btn-secondary mr-2" id="btn-paste">Paste</button>
+				<button type="button" class="btn btn-secondary" id="btn-upload">Choose File</button>
+			</div>
+			<div class="form-group">
+				<label for="output">Output</label>
+				<output class="form-control" id="output" lang="he"></output>
+			</div>
+			<div class="form-group">
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="output-script" id="output-script-dots" checked>
+					<label class="form-check-label" for="output-script">
+						Unicode Braille glyphs
+					</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="output-script" id="output-script-brf" value="brf">
+					<label class="form-check-label" for="output-script-brf">
+						BRF
+					</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="radio" name="output-script" id="output-script-keypresses" value="brf">
+					<label class="form-check-label" for="output-script-keypresses">
+						English Braille keypresses
+					</label>
+				</div>
+			</div>
+			<div class="form-group d-flex">
+				<button type="button" class="btn btn-secondary mr-2" id="btn-copy">Copy</button>
+				<button type="button" class="btn btn-secondary" id="btn-save">Save</button>
+			</div>
+		</main>
+	</div>
+</body>
+</html>
