@@ -74,7 +74,7 @@
 				<button type="submit" class="btn btn-primary mr-2 mb-2" id="btn-submit">Transcode</button>
 				<button type="button" class="btn btn-secondary mr-2 mb-2" id="btn-paste">Paste</button>
 				<button type="button" class="btn btn-secondary mb-2" id="btn-upload">Choose File</button>
-				<input type="file" hidden id="upload-file" accept="text/html,text/plain,.brf">
+				<input type="file" hidden id="upload-file" accept="text/html,text/plain,.brf,.brl">
 			</div>
 			<div class="form-group">
 				<label for="output">Output</label>
@@ -83,7 +83,7 @@
 			<div id="hebrew-output-options" class="collapse show">
 				<div class="form-group">
 					<div class="form-check">
-						<input class="form-check-input" type="radio" name="output-script" id="output-script-dots" value="he-Brai" checked>
+						<input class="form-check-input" type="radio" name="output-script" id="output-script-dots" value="dots" checked>
 						<label class="form-check-label" for="output-script">
 							Unicode Braille glyphs
 						</label>
@@ -109,10 +109,6 @@
 					<div class="form-check">
 						<input type="checkbox" class="form-check-input" id="show-shva" checked>
 						<label class="form-check-label" for="show-dagesh">Include shva</label>
-					</div>
-					<div class="form-check">
-						<input type="checkbox" class="form-check-input" id="show-meteg" checked>
-						<label class="form-check-label" for="show-dagesh">Include meteg</label>
 					</div>
 				</div>
 				<div class="form-row mb-2">
