@@ -16,6 +16,10 @@ a {
 	color: hsl(211, 100%, 46%, 1);
 }
 
+[dir="rtl"] {
+	text-align: right;
+}
+
 #container {
 	background-color: White;
 	padding-bottom: 0.5rem;

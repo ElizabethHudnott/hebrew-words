@@ -1,0 +1,11 @@
+@media (min-width: 576px) {
+	.btn {
+		min-width: 108px;
+	}
+}
+
+#output {
+	overflow-y: auto;
+	resize: vertical;
+	white-space: pre-wrap;
+}

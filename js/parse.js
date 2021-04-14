@@ -1,7 +1,6 @@
 'use strict';
 
 /* TODO
- * Pei sofit
  * Vav with dagesh and shuruk
  * Cholam implied by shin dot
  */
@@ -43,6 +42,15 @@ const SHIN = 33;
 const TAV	= 34;
 const TAV_WITH_DAGESH = 35;
 const DAGESH = 36;
+
+const sofitSymbols = new Map();
+sofitSymbols.set(KHAF, KHAF_SOFIT);
+sofitSymbols.set(KAF, KAF_SOFIT);
+sofitSymbols.set(MEM, MEM_SOFIT);
+sofitSymbols.set(NUN, NUN_SOFIT);
+sofitSymbols.set(FEI, FEI_SOFIT);
+sofitSymbols.set(TSADI, TSADI_SOFIT);
+
 const MAQAF = 37;
 const SPACE = 38;
 const COMMA = 39;
@@ -50,12 +58,16 @@ const FULL_STOP = 40;
 const QUESTION_MARK = 41;
 const NEW_LINE = 42;
 
+function isPunctuation(symbol) {
+	return symbol >= MAQAF && symbol <= NEW_LINE;
+}
+
 // 2xx are short vowels
 // 1xx are long vowels and diphthongs
 const VOWEL_MARK= 200;
 const PATACH	= 210;
 const STOLEN_PATACH = 110;
-const AI		= 111;
+const AI		= 111; // Diphthongs aren't currently separated for special processing
 const CHATAF_PATACH = 211;
 const KAMATZ	= 220;
 const KAMATZ_HE	= 121;
@@ -80,6 +92,9 @@ const INITIAL_SHVA = 190;
 const FINAL_SHVA = 191;
 const HE_MATER = 198;
 const ALEPH_MATER = 199;
+const materLectionis = [
+	KAMATZ_HE, KAMATZ_YOD_VAV, SEGOL_YOD, TSERE_YOD, HIRIQ_YOD, CHOLAM_VAV, SHURUK
+];
 
 const heScriptInput = new Map();
 heScriptInput.set('א', ALEPH);
@@ -138,6 +153,10 @@ function isVowel(symbol) {
 	return symbol > VOWEL_MARK;
 }
 
+function hasLetter(symbol) {
+	return symbol <= TAV_WITH_DAGESH || materLectionis.includes(symbol);
+}
+
 function parseHebrew(input) {
 	const chars = input.normalize('NFD').split('');
 	let  letters = [];
@@ -180,6 +199,7 @@ function parseHebrew(input) {
 		} else if (nextNext === SIN_DOT && next === DAGESH) {
 			// SIN_OR_SHIN, DAGESH, SIN_DOT
 			newLetters.push(SIN, DAGESH, CHOLAM);
+			i += 3;
 		} else {
 			newLetters.push(thisLetter);
 			i++;
@@ -212,7 +232,7 @@ function parseHebrew(input) {
 				// Shuruk
 				newLetters.push(SHURUK);
 			} else {
-				newLetters.push(DAGESH, nextLetter);
+				newLetters.push(nextLetter, DAGESH);
 			}
 			i += 2;
 		} else if (thisLetter === VAV && nextLetter === CHOLAM) {

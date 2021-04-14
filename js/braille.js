@@ -43,7 +43,7 @@ brfInput.set('>', CHATAF_KAMATZ);
 brfInput.set('3', CHATAF_PATACH);
 brfInput.set('5', CHATAF_SEGOL);
 brfInput.set(',', SHVA);
-brfInput.set('^', DAGESH);
+brfInput.set('"', DAGESH);
 brfInput.set('-', MAQAF);
 brfInput.set(' ', SPACE);
 brfInput.set('1', COMMA);
@@ -151,7 +151,7 @@ unicodeBraille.set(SIN, '⠱');
 unicodeBraille.set(SHIN, '⠩');
 unicodeBraille.set(TAV, '⠹');
 unicodeBraille.set(TAV_WITH_DAGESH, '⠳');
-unicodeBraille.set(DAGESH, '⠘');
+unicodeBraille.set(DAGESH, '⠐');
 unicodeBraille.set(MAQAF, '⠤');
 unicodeBraille.set(SPACE, ' ');
 unicodeBraille.set(COMMA, '⠂');
@@ -193,30 +193,40 @@ producers.set('dots', toUnicodeGlyphs);
 let inputType = 'sighted';
 let outputType = 'dots';
 
+const inputBox = document.getElementById('input-text');
+const outputBox = document.getElementById('output');
+const minInputHeight = 'calc(1.5em + 14px)';
+
+function resizeInputBox() {
+	inputBox.style.height = '';
+	const height = Math.min(inputBox.scrollHeight + 2, 300);
+	inputBox.style.height = height + 'px';
+}
+
 function sightedToBraille(event) {
 	$('#hebrew-input-options').collapse('show');
 	$('#hebrew-output-options').collapse('show');
-	const output = document.getElementById('output');
-	output.innerHTML = '';
-	output.lang = outputType === 'dots' ? 'he-Brai' : '';
-	output.dir = 'ltr';
-	const input = document.getElementById('input-text');
-	input.lang = 'he';
-	input.dir = 'rtl';
+	outputBox.value = '';
+	outputBox.style.height = minInputHeight;
+	outputBox.lang = outputType === 'dots' ? 'he-Brai' : '';
+	outputBox.dir = 'ltr';
+	inputBox.lang = 'he';
+	inputBox.dir = 'rtl';
 	inputType = 'sighted';
+	resizeInputBox();
 }
 
 function brailleToSighted(event) {
 	$('#hebrew-input-options').collapse('hide');
 	$('#hebrew-output-options').collapse('hide');
-	const output = document.getElementById('output');
-	output.innerHTML = '';
-	output.lang = 'he';
-	output.dir = 'rtl';
-	const input = document.getElementById('input-text');
-	input.lang = '';
-	input.dir = 'ltr';
+	outputBox.value = '';
+	outputBox.style.height = minInputHeight;
+	outputBox.lang = 'he';
+	outputBox.dir = 'rtl';
+	inputBox.lang = '';
+	inputBox.dir = 'ltr';
 	inputType = this.value;
+	resizeInputBox();
 }
 
 document.getElementById('input-script-sighted').addEventListener('input', sightedToBraille);
@@ -226,7 +236,7 @@ document.getElementById('input-script-english').addEventListener('input', braill
 document.getElementById('btn-submit').addEventListener('click', function (event) {
 	event.preventDefault();
 	const parser = parsers.get(inputType);
-	const intermediateRep = parser(document.getElementById('input-text').value);
+	const intermediateRep = parser(inputBox.value);
 	let producer;
 	if (inputType === 'sighted') {
 		producer = producers.get(outputType);
@@ -234,7 +244,11 @@ document.getElementById('btn-submit').addEventListener('click', function (event)
 		producer = toSighted;
 	}
 	const output = producer(intermediateRep);
-	document.getElementById('output').innerHTML = escapeHTML(output);
+	outputBox.value = output;
+	outputBox.style.height = '';
+	const height = Math.min(outputBox.scrollHeight + 2, 300);
+	outputBox.style.height = 'max(' + height + 'px, ' + minInputHeight + ')';
+	document.getElementById('output-btns').scrollIntoView({behavior: 'smooth', block: 'end'});
 });
 
 {
@@ -243,7 +257,7 @@ document.getElementById('btn-submit').addEventListener('click', function (event)
 	if ('readText' in navigator.clipboard) {
 		pasteButton.addEventListener('click', function (event) {
 			navigator.clipboard.readText().then(text => {
-				document.getElementById('input-text').value = text;
+				inputBox.value = text;
 			}).catch(e => {
 				alert('Before you can use this feature you need to adjust your browser settings to grant this page permission to use the clipboard.');
 			});
@@ -257,14 +271,55 @@ document.getElementById('btn-upload').addEventListener('click', function (event)
 	document.getElementById('upload-file').click();
 });
 
-document.getElementById('input-text').addEventListener('keydown', function (event) {
+inputBox.addEventListener('keydown', function (event) {
 	if (event.key === 'Enter' && !event.shiftKey && !event.ctrlKey) {
 		event.preventDefault();
 		document.getElementById('btn-submit').click();
 	}
 });
 
+let pasting = false;
+
+inputBox.addEventListener('paste', function (event) {
+	pasting = true;
+});
+
+inputBox.addEventListener('input', function (event) {
+	if (pasting || this.value === '') {
+		resizeInputBox();
+	}
+	pasting = false;
+});
+
+outputBox.addEventListener('beforeinput', function (event) {
+	event.preventDefault();
+});
+
 $('.collapse').collapse({toggle: false});
+
+function addSofitSymbols(symbols) {
+	let i = symbols.length - 1;
+	let symbol = symbols[i];
+	let sofit = sofitSymbols.get(symbol);
+	if (sofit !== undefined) {
+		symbols[i] = sofit;
+		i--;
+	}
+	while (i >= 1) {
+		if (isPunctuation(symbols[i])) {
+			i--;
+			while (i > 0 && !hasLetter(symbols[i])) {
+				i--;
+			}
+			symbol = symbols[i];
+			sofit = sofitSymbols.get(symbol);
+			if (sofit !== undefined) {
+				symbols[i] = sofit;
+			}
+		}
+		i--;
+	}
+}
 
 function parseBRF(str) {
 	let symbols = [];
@@ -275,22 +330,14 @@ function parseBRF(str) {
 		}
 		symbols.push(symbol);
 	}
+	addSofitSymbols(symbols);
 	return symbols;
 }
 
 function toSighted(intermediateRep) {
 	let output = '';
-	let i = 0;
-	while (i < intermediateRep.length) {
-		const symbol = intermediateRep[i];
-		if (symbol === DAGESH) {
-			output += heScriptOutput.get(intermediateRep[i + 1]);
-			output += 'ּ';
-			i += 2;
-		} else {
-			output += heScriptOutput.get(intermediateRep[i]);
-			i++;
-		}
+	for (let symbol of intermediateRep) {
+		output += heScriptOutput.get(symbol);
 	}
 	return output;
 }
