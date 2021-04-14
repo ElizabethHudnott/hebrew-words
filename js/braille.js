@@ -195,19 +195,28 @@ let outputType = 'dots';
 
 const inputBox = document.getElementById('input-text');
 const outputBox = document.getElementById('output');
-const minInputHeight = 'calc(1.5em + 14px)';
+const minTextAreaHeight = 'calc(1.5em + 14px)';
+const maxTextAreaHeight = 280;
+
+function clearOutput() {
+	outputBox.value = '';
+	outputBox.style.height = minTextAreaHeight;
+}
 
 function resizeInputBox() {
-	inputBox.style.height = '';
-	const height = Math.min(inputBox.scrollHeight + 2, 300);
-	inputBox.style.height = height + 'px';
+	if (inputType === 'brf') {
+		inputBox.style.height = minTextAreaHeight;
+	} else {
+		inputBox.style.height = '';
+		const height = Math.min(inputBox.scrollHeight + 2, maxTextAreaHeight);
+		inputBox.style.height = height + 'px';
+	}
 }
 
 function sightedToBraille(event) {
 	$('#hebrew-input-options').collapse('show');
 	$('#hebrew-output-options').collapse('show');
-	outputBox.value = '';
-	outputBox.style.height = minInputHeight;
+	clearOutput();
 	outputBox.lang = outputType === 'dots' ? 'he-Brai' : '';
 	outputBox.dir = 'ltr';
 	inputBox.lang = 'he';
@@ -219,8 +228,7 @@ function sightedToBraille(event) {
 function brailleToSighted(event) {
 	$('#hebrew-input-options').collapse('hide');
 	$('#hebrew-output-options').collapse('hide');
-	outputBox.value = '';
-	outputBox.style.height = minInputHeight;
+	clearOutput();
 	outputBox.lang = 'he';
 	outputBox.dir = 'rtl';
 	inputBox.lang = '';
@@ -246,9 +254,11 @@ document.getElementById('btn-submit').addEventListener('click', function (event)
 	const output = producer(intermediateRep);
 	outputBox.value = output;
 	outputBox.style.height = '';
-	const height = Math.min(outputBox.scrollHeight + 2, 300);
-	outputBox.style.height = 'max(' + height + 'px, ' + minInputHeight + ')';
+	const height = Math.min(outputBox.scrollHeight + 2, maxTextAreaHeight);
+	outputBox.style.height = 'max(' + height + 'px, ' + minTextAreaHeight + ')';
 	document.getElementById('output-btns').scrollIntoView({behavior: 'smooth', block: 'end'});
+	outputBox.focus();
+	outputBox.scrollTop = 0;
 });
 
 {
@@ -258,6 +268,7 @@ document.getElementById('btn-submit').addEventListener('click', function (event)
 		pasteButton.addEventListener('click', function (event) {
 			navigator.clipboard.readText().then(text => {
 				inputBox.value = text;
+				clearOutput();
 			}).catch(e => {
 				alert('Before you can use this feature you need to adjust your browser settings to grant this page permission to use the clipboard.');
 			});
@@ -288,6 +299,7 @@ inputBox.addEventListener('input', function (event) {
 	if (pasting || this.value === '') {
 		resizeInputBox();
 	}
+	clearOutput();
 	pasting = false;
 });
 

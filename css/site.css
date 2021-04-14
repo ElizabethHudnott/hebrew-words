@@ -16,6 +16,10 @@ a {
 	color: hsl(211, 100%, 46%, 1);
 }
 
+textarea {
+	min-height: calc(1.5em + 14px);
+}
+
 [dir="rtl"] {
 	text-align: right;
 }
@@ -44,6 +48,27 @@ main h3 {
 
 .bg-required, .bg-required:focus {
 	background-color: var(--required-color);	
+}
+
+.btn-form {
+	background-color: #e9ecef;
+}
+
+.btn-form:hover {
+	background-color: #d3d9df;
+}
+
+.bg-form {
+	background-color: #eeeeee;
+}
+
+.fade2 {
+	opacity: 0;
+	transition: opacity 0.1s linear;
+}
+
+.fade2.show {
+	opacity: 1;
 }
 
 .fit-content {

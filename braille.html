@@ -95,38 +95,66 @@
 						</label>
 					</div>
 				</div>
-				<div class="form-group">
-					<div class="form-check">
-						<input type="checkbox" class="form-check-input" id="show-dagesh" checked>
-						<label class="form-check-label" for="show-dagesh">Include all dageshim</label>
-					</div>
-					<div class="form-check">
-						<input type="checkbox" class="form-check-input" id="show-shva" checked>
-						<label class="form-check-label" for="show-dagesh">Include shva</label>
-					</div>
-				</div>
-				<div class="form-row mb-2">
-					<label class="col-7 col-sm-4 col-md-3 col-lg-2 col-form-label" for="chars-per-line">
-						Characters per line
-					</label>
-					<div class="col-auto">
-						<input type="number" min="1" max="99" value="40" class="form-control" id="chars-per-line">
-					</div>
-				</div>
-				<div class="form-row form-group">
-					<label class="col-7 col-sm-4 col-md-3 col-lg-2 col-form-label" for="lines-per-page">
-						Lines per page
-					</label>
-					<div class="col-auto">
-						<input type="number" min="1" max="99" value="25" class="form-control" id="lines-per-page">
-					</div>
-				</div>
 			</div>
-			<div class="form-group d-flex" id="output-btns">
-				<button type="button" class="btn btn-secondary mr-2" id="btn-copy">Copy</button>
-				<button type="button" class="btn btn-secondary" id="btn-save">Save</button>
+			<div class="d-flex flex-wrap" id="output-btns">
+				<button type="button" class="btn btn-secondary mr-2 mb-2" id="btn-copy">
+					Copy
+				</button>
+				<button type="button" class="btn btn-secondary mr-2 mb-2" id="btn-save">
+					Save
+				</button>
+				<button type="button" class="btn btn-form mr-2 mb-2" data-toggle="modal" data-target="#braille-opts-modal">
+					Braille Options&hellip;
+				</button>
 			</div>
 		</main>
+	</div>
+	<div class="modal fade2" id="braille-opts-modal" tabindex="-1" aria-labelledby="braille-opts-modal-title" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content bg-form">
+				<div class="modal-header">
+					<h5 class="modal-title" id="braille-opts-modal-title">
+						Braille Output Options
+					</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="form-row mb-2">
+						<label class="col-4 col-form-label" for="chars-per-line">
+							Characters per line
+						</label>
+						<div class="col-auto">
+							<input type="number" min="1" max="99" value="40" class="form-control" id="chars-per-line">
+						</div>
+					</div>
+					<div class="form-row form-group">
+						<label class="col-4 col-form-label" for="lines-per-page">
+							Lines per page
+						</label>
+						<div class="col-auto">
+							<input type="number" min="1" max="99" value="25" class="form-control" id="lines-per-page">
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="form-check">
+							<input type="checkbox" class="form-check-input" id="show-dagesh" checked>
+							<label class="form-check-label" for="show-dagesh">Include all dageshim</label>
+						</div>
+						<div class="form-check">
+							<input type="checkbox" class="form-check-input" id="show-shva" checked>
+							<label class="form-check-label" for="show-dagesh">Include shva</label>
+						</div>
+					</div>
+				</div>
+				 <div class="modal-footer">
+					<button type="button" class="btn btn-primary" data-dismiss="modal">
+						Done
+					</button>
+				</div>
+			</div>
+		</div>
 	</div>
 </body>
 </html>
