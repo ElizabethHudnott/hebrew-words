@@ -260,13 +260,12 @@ function parseHebrew(input) {
 	const penultimate = newLetters[numLetters - 2];
 	if (finalLetter === PATACH) {
 		// Stolen Patach
-		if (penultimate === CHET || penultimate === AYIN) {
-			newLetters[numLetters - 1] = penultimate;
-			newLetters[numLetters - 2] = STOLEN_PATACH;
-		} else if (penultimate === DAGESH && newLetter[numLetters - 3] === HE) {
-			newLetters[numLetters - 1] = DAGESH;
-			newLetters[numLetters - 2] = HE;
-			newLetters[numLetters - 3] = STOLEN_PATACH;
+		if (
+			penultimate === CHET ||
+			penultimate === AYIN ||
+			(penultimate === DAGESH && newLetter[numLetters - 3] === HE)
+		) {
+			newLetters[numLetters - 1] = STOLEN_PATACH;
 		}
 	} else if (finalLetter === HE && penultimate === KAMATZ) {
 		// Final Kamatz He

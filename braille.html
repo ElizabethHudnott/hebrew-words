@@ -14,7 +14,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-	<div class="container" id="container">
+	<div class="container-fluid container-lg" id="container">
 		<header class="jumbotron" id="header">
 			<h1 class="display-3">Hebrew Braille Transcoder</h1>
 			<nav aria-label="breadcrumb">
@@ -32,33 +32,69 @@
 					Press Shift+Enter to begin a new line.
 				</small>
 			</div>
-			<div class="form-group">
-				<div class="form-check">
-					<input class="form-check-input" type="radio" name="input-script" id="input-script-sighted" value="sighted" checked>
-					<label class="form-check-label" for="input-script-sighted">
-						Sighted Hebrew
-					</label>
+			<div class="row">
+				<div class="col-12 col-md-6 pr-md-1">
+					<div class="panel h-100">
+						<fieldset>
+							<legend class="col-form-label">Input Format</legend>
+							<div class="form-group">
+								<div class="form-check">
+									<input class="form-check-input" type="radio" name="input-script" id="input-script-sighted" value="sighted" checked>
+									<label class="form-check-label" for="input-script-sighted">
+										Sighted Hebrew
+									</label>
+								</div>
+								<div class="form-check">
+									<input class="form-check-input" type="radio" name="input-script" id="input-script-brf" value="brf">
+									<label class="form-check-label" for="input-script-brf">
+										Hebrew Braille in BRF (Braille Ready Format)
+									</label>
+								</div>
+								<div class="form-check">
+									<input class="form-check-input" type="radio" name="input-script" id="input-script-english" value="en">
+									<label class="form-check-label" for="input-script-english">
+										Hebrew Braille typed on an English Braille keyboard
+									</label>
+								</div>
+							</div>
+							<div class="form-group collapse show" id="hebrew-input-options">
+								<div class="form-check">
+									<input type="checkbox" class="form-check-input" id="virtual-keyboard" checked>
+									<label class="form-check-label" for="virtual keyboard">
+										Simulate Hebrew keyboard
+									</label>
+									(<a href="https://www.sbl-site.org/Fonts/BiblicalHebrewSILManual.pdf" target="_blank" rel="noopener">manual</a>)
+								</div>
+							</div>
+						</fieldset>
+					</div>
 				</div>
-				<div class="form-check">
-					<input class="form-check-input" type="radio" name="input-script" id="input-script-brf" value="brf">
-					<label class="form-check-label" for="input-script-brf">
-						Hebrew Braille in BRF (Braille Ready Format)
-					</label>
-				</div>
-				<div class="form-check">
-					<input class="form-check-input" type="radio" name="input-script" id="input-script-english" value="en">
-					<label class="form-check-label" for="input-script-english">
-						Hebrew Braille typed on an English Braille keyboard
-					</label>
-				</div>
-			</div>
-			<div class="form-group collapse show" id="hebrew-input-options">
-				<div class="form-check">
-					<input type="checkbox" class="form-check-input" id="virtual-keyboard" checked>
-					<label class="form-check-label" for="virtual keyboard">
-						Simulate Hebrew keyboard
-					</label>
-					(<a href="https://www.sbl-site.org/Fonts/BiblicalHebrewSILManual.pdf" target="_blank" rel="noopener">manual</a>)
+				<div class="col-12 col-md-6 pl-md-1 fade show" id="hebrew-output-options">
+					<div class="panel h-100">
+						<fieldset>
+							<legend class="col-form-label">Output Format</legend>
+							<div class="form-group">
+								<div class="form-check">
+									<input class="form-check-input" type="radio" name="output-script" id="output-script-dots" value="dots" checked>
+									<label class="form-check-label" for="output-script">
+										Unicode Braille glyphs
+									</label>
+								</div>
+								<div class="form-check">
+									<input class="form-check-input" type="radio" name="output-script" id="output-script-brf" value="brf">
+									<label class="form-check-label" for="output-script-brf">
+										BRF
+									</label>
+								</div>
+								<div class="form-check">
+									<input class="form-check-input" type="radio" name="output-script" id="output-script-keypresses" value="en">
+									<label class="form-check-label" for="output-script-keypresses">
+										English Braille keypresses
+									</label>
+								</div>
+							</div>
+						</fieldset>
+					</div>
 				</div>
 			</div>
 			<details open class="form-group">
@@ -67,34 +103,15 @@
 			<div class="d-flex flex-wrap">
 				<button type="submit" class="btn btn-primary mr-2 mb-2" id="btn-submit">Transcode</button>
 				<button type="button" class="btn btn-secondary mr-2 mb-2" id="btn-paste">Paste</button>
-				<button type="button" class="btn btn-secondary mb-2" id="btn-upload">Choose File</button>
+				<button type="button" class="btn btn-secondary mr-2 mb-2" id="btn-upload">Choose File</button>
+				<button type="button" class="btn btn-form mb-2" data-toggle="modal" data-target="#braille-opts-modal">
+					Braille Options&hellip;
+				</button>
 				<input type="file" hidden id="upload-file" accept="text/html,text/plain,.brf,.brl">
 			</div>
 			<div class="form-group">
 				<label for="output">Output</label>
 				<textarea class="form-control" id="output" lang="he-Brai"></textarea>
-			</div>
-			<div id="hebrew-output-options" class="collapse show">
-				<div class="form-group">
-					<div class="form-check">
-						<input class="form-check-input" type="radio" name="output-script" id="output-script-dots" value="dots" checked>
-						<label class="form-check-label" for="output-script">
-							Unicode Braille glyphs
-						</label>
-					</div>
-					<div class="form-check">
-						<input class="form-check-input" type="radio" name="output-script" id="output-script-brf" value="brf">
-						<label class="form-check-label" for="output-script-brf">
-							BRF
-						</label>
-					</div>
-					<div class="form-check">
-						<input class="form-check-input" type="radio" name="output-script" id="output-script-keypresses" value="en">
-						<label class="form-check-label" for="output-script-keypresses">
-							English Braille keypresses
-						</label>
-					</div>
-				</div>
 			</div>
 			<div class="d-flex flex-wrap" id="output-btns">
 				<button type="button" class="btn btn-secondary mr-2 mb-2" id="btn-copy">
@@ -102,9 +119,6 @@
 				</button>
 				<button type="button" class="btn btn-secondary mr-2 mb-2" id="btn-save">
 					Save
-				</button>
-				<button type="button" class="btn btn-form mr-2 mb-2" data-toggle="modal" data-target="#braille-opts-modal">
-					Braille Options&hellip;
 				</button>
 			</div>
 		</main>

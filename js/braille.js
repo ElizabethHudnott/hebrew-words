@@ -196,7 +196,7 @@ let outputType = 'dots';
 const inputBox = document.getElementById('input-text');
 const outputBox = document.getElementById('output');
 const minTextAreaHeight = 'calc(1.5em + 14px)';
-const maxTextAreaHeight = 280;
+const maxTextAreaHeight = 290;
 
 function clearOutput() {
 	outputBox.value = '';
@@ -214,8 +214,9 @@ function resizeInputBox() {
 }
 
 function sightedToBraille(event) {
+	const outputOpts = document.getElementById('hebrew-output-options');
+	outputOpts.classList.add('show');
 	$('#hebrew-input-options').collapse('show');
-	$('#hebrew-output-options').collapse('show');
 	clearOutput();
 	outputBox.lang = outputType === 'dots' ? 'he-Brai' : '';
 	outputBox.dir = 'ltr';
@@ -226,8 +227,9 @@ function sightedToBraille(event) {
 }
 
 function brailleToSighted(event) {
+	const outputOpts = document.getElementById('hebrew-output-options');
+	outputOpts.classList.remove('show');
 	$('#hebrew-input-options').collapse('hide');
-	$('#hebrew-output-options').collapse('hide');
 	clearOutput();
 	outputBox.lang = 'he';
 	outputBox.dir = 'rtl';
