@@ -92,6 +92,7 @@ heScriptOutput.set(COMMA, ',');
 heScriptOutput.set(FULL_STOP, '.');
 heScriptOutput.set(QUESTION_MARK, '?');
 heScriptOutput.set(NEW_LINE, '\n');
+heScriptOutput.set(PARAGRAPH, '\n\n');
 heScriptOutput.set(PATACH, 'ַ');
 heScriptOutput.set(STOLEN_PATACH, 'ַ');
 heScriptOutput.set(CHATAF_PATACH, 'ֲ');
@@ -158,6 +159,7 @@ unicodeBraille.set(COMMA, '⠂');
 unicodeBraille.set(FULL_STOP, '⠲');
 unicodeBraille.set(QUESTION_MARK, '⠦');
 unicodeBraille.set(NEW_LINE, '\n');
+unicodeBraille.set(PARAGRAPH, '\n  ');
 unicodeBraille.set(PATACH, '⠉');
 unicodeBraille.set(STOLEN_PATACH, '⠉');
 unicodeBraille.set(CHATAF_PATACH, '⠒');
@@ -202,6 +204,8 @@ function clearOutput() {
 	outputBox.value = '';
 	outputBox.style.height = minTextAreaHeight;
 }
+
+outputBox.style.height = minTextAreaHeight;
 
 function resizeInputBox() {
 	if (inputType === 'brf') {
@@ -285,9 +289,14 @@ document.getElementById('btn-upload').addEventListener('click', function (event)
 });
 
 inputBox.addEventListener('keydown', function (event) {
-	if (event.key === 'Enter' && !event.shiftKey && !event.ctrlKey) {
-		event.preventDefault();
-		document.getElementById('btn-submit').click();
+	if (event.key === 'Enter') {
+		if (event.shiftKey || event.ctrlKey) {
+			const currentHeight = inputBox.clientHeight + 2;
+			inputBox.style.height = 'min(calc(' + currentHeight + 'px + 1.5em), ' + maxTextAreaHeight + 'px)';
+		} else {
+			event.preventDefault();
+			document.getElementById('btn-submit').click();
+		}
 	}
 });
 
@@ -333,19 +342,35 @@ function addSofitSymbols(symbols) {
 		}
 		i--;
 	}
+	const newSymbols = [];
+	i = 0;
+	while (i < symbols.length) {
+		const symbol = symbols[i];
+		if (symbol === NEW_LINE && symbols[i + 1] === SPACE && symbols[i + 2] === SPACE) {
+			newSymbols.push(PARAGRAPH);
+			i += 3;
+		} else {
+			newSymbols.push(symbol);
+			i++;
+		}
+	}
+	return newSymbols;
 }
 
 function parseBRF(str) {
 	let symbols = [];
 	for (let brfChar of str.toUpperCase()) {
+		if (brfChar === '@') {
+			// Some kind of cantillation mark?
+			continue;
+		}
 		const symbol = brfInput.get(brfChar);
 		if (symbol === undefined) {
 			throw new Error('Unable to translate ' + brfChar);
 		}
 		symbols.push(symbol);
 	}
-	addSofitSymbols(symbols);
-	return symbols;
+	return addSofitSymbols(symbols);
 }
 
 function toSighted(intermediateRep) {

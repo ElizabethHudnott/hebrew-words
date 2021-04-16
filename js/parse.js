@@ -57,6 +57,7 @@ const COMMA = 39;
 const FULL_STOP = 40;
 const QUESTION_MARK = 41;
 const NEW_LINE = 42;
+const PARAGRAPH = 43;
 
 function isPunctuation(symbol) {
 	return symbol >= MAQAF && symbol <= NEW_LINE;
@@ -200,6 +201,9 @@ function parseHebrew(input) {
 			// SIN_OR_SHIN, DAGESH, SIN_DOT
 			newLetters.push(SIN, DAGESH, CHOLAM);
 			i += 3;
+		} else if (thisLetter === NEW_LINE && nextLetter === NEW_LINE) {
+			newLetters.push(PARAGRAPH);
+			i += 2;
 		} else {
 			newLetters.push(thisLetter);
 			i++;
