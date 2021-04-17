@@ -51,6 +51,55 @@ brfInput.set('4', FULL_STOP);
 brfInput.set('8', QUESTION_MARK);
 brfInput.set('\n', NEW_LINE);
 
+const singleBrailleChar = new Map();
+const doubleBrailleChar = new Map();
+singleBrailleChar.set('a', ALEPH);
+doubleBrailleChar.set('ar', CHATAF_KAMATZ);
+singleBrailleChar.set('b', BET);
+singleBrailleChar.set('c', PATACH);
+doubleBrailleChar.set('ch', KHAF);
+singleBrailleChar.set('d', DALET);
+singleBrailleChar.set('e', SEGOL);
+doubleBrailleChar.set('ed', AYIN);
+doubleBrailleChar.set('en', CHATAF_SEGOL);
+singleBrailleChar.set('f', FEI);
+singleBrailleChar.set('g', GIMEL);
+doubleBrailleChar.set('gh', KAMATZ);
+singleBrailleChar.set('h', HE);
+singleBrailleChar.set('i', HIRIQ);
+doubleBrailleChar.set('in', HIRIQ_YOD);
+singleBrailleChar.set('k', KAF);
+singleBrailleChar.set('j', YOD);
+singleBrailleChar.set('l', LAMED);
+singleBrailleChar.set('m', MEM);
+singleBrailleChar.set('n', NUN);
+singleBrailleChar.set('o', CHOLAM);
+doubleBrailleChar.set('ou', TAV_WITH_DAGESH);
+doubleBrailleChar.set('ow', CHOLAM_VAV);
+singleBrailleChar.set('p', PEI);
+singleBrailleChar.set('q', QOF);
+singleBrailleChar.set('r', REISH);
+singleBrailleChar.set('s', SAMEKH);
+doubleBrailleChar.set('sh', SHIN);
+doubleBrailleChar.set('st', TSERE);
+singleBrailleChar.set('⁄', TSERE);	// in numeric mode
+singleBrailleChar.set('t', TET);
+doubleBrailleChar.set('th', TAV);
+singleBrailleChar.set('u', KUBUTZ);
+singleBrailleChar.set('v', VET);
+singleBrailleChar.set('w', VAV);
+singleBrailleChar.set('wh', SIN);
+singleBrailleChar.set('x', CHET);
+singleBrailleChar.set('z', ZAYIN);
+singleBrailleChar.set(':', CHATAF_PATACH);
+singleBrailleChar.set('-', MAQAF);
+singleBrailleChar.set(' ', SPACE);
+singleBrailleChar.set(',', COMMA);
+singleBrailleChar.set('?', QUESTION_MARK);
+singleBrailleChar.set('\n', NEW_LINE);
+doubleBrailleChar.set('\n\n', PARAGRAPH);
+//singleBrailleChar.set('', );
+
 const heScriptOutput = new Map();
 heScriptOutput.set(ALEPH, 'א');
 heScriptOutput.set(VET, 'ב');
@@ -189,6 +238,7 @@ unicodeBraille.set(ALEPH_MATER, '⠈');
 const parsers = new Map();
 parsers.set('sighted', parseHebrew);
 parsers.set('brf', parseBRF);
+parsers.set('heb-in-en', parseHebrewInEnglish);
 const producers = new Map();
 producers.set('sighted', toSighted);
 producers.set('dots', toUnicodeGlyphs);
@@ -321,40 +371,24 @@ outputBox.addEventListener('beforeinput', function (event) {
 $('.collapse').collapse({toggle: false});
 
 function addSofitSymbols(symbols) {
-	let i = symbols.length - 1;
-	let symbol = symbols[i];
-	let sofit = sofitSymbols.get(symbol);
-	if (sofit !== undefined) {
-		symbols[i] = sofit;
-		i--;
-	}
+	const maxSymbol = symbols.length - 1;
+	let i = maxSymbol;
+	let symbol, sofit;
 	while (i >= 1) {
-		if (isPunctuation(symbols[i])) {
+		symbol = symbols[i];
+		if (isPunctuation(symbol) || i === maxSymbol) {
 			i--;
-			while (i > 0 && !hasLetter(symbols[i])) {
+			while (i >= 0 && !hasLetter(symbol)) {
+				symbol = symbols[i];
 				i--;
 			}
-			symbol = symbols[i];
 			sofit = sofitSymbols.get(symbol);
 			if (sofit !== undefined) {
-				symbols[i] = sofit;
+				symbols[i + 1] = sofit;
 			}
 		}
 		i--;
 	}
-	const newSymbols = [];
-	i = 0;
-	while (i < symbols.length) {
-		const symbol = symbols[i];
-		if (symbol === NEW_LINE && symbols[i + 1] === SPACE && symbols[i + 2] === SPACE) {
-			newSymbols.push(PARAGRAPH);
-			i += 3;
-		} else {
-			newSymbols.push(symbol);
-			i++;
-		}
-	}
-	return newSymbols;
 }
 
 function parseBRF(str) {
@@ -370,7 +404,84 @@ function parseBRF(str) {
 		}
 		symbols.push(symbol);
 	}
-	return addSofitSymbols(symbols);
+	addSofitSymbols(symbols);
+
+	// Identify paragraphs
+	const newSymbols = [];
+	i = 0;
+	while (i < symbols.length) {
+		const symbol = symbols[i];
+		if (symbol === NEW_LINE && symbols[i + 1] === SPACE && symbols[i + 2] === SPACE) {
+			newSymbols.push(PARAGRAPH);
+			i += 3;
+		} else {
+			newSymbols.push(symbol);
+			i++;
+		}
+	}
+	return newSymbols;
+}
+
+function parseHebrewInEnglish(str) {
+	const symbols = [];
+	let numericMode = false;
+	let i = 0;
+	while (i < str.length) {
+		let singleLetter = str[i];
+		if (singleLetter >= 'A' && singleLetter <= 'Z') {
+			symbols.push(SHVA);
+			singleLetter = singleLetter.toLowerCase();
+		} else if (
+			(singleLetter >= '0' && singleLetter <= '9') ||
+			singleLetter === '⁄'
+		) {
+			if (!numericMode) {
+				symbols.push(TSERE_YOD);
+				numericMode = true;
+			}
+			if (singleLetter === '0') {
+				singleLetter = 'j';
+			} else if (singleLetter !== '⁄') {
+				// 1..9 -> a..i
+				singleLetter = String.fromCharCode(singleLetter.charCodeAt(0) + 48);
+			}
+		} else if (numericMode) {
+			const nextLetter = str[i + 1];
+			if (singleLetter === ' ' && nextLetter >= '0' && nextLetter <= '9') {
+				symbols.push(DAGESH);
+				i++;
+				continue;
+			} else if (singleLetter !== '.' && singleLetter !== ',') {
+				numericMode = false;
+			}
+		}
+
+		if (!numericMode) {
+			const doubleLetter = singleLetter + str[i + 1];
+			const twoLetterSymbol = doubleBrailleChar.get(doubleLetter);
+			if (twoLetterSymbol !== undefined) {
+				symbols.push(twoLetterSymbol);
+				i += 2;
+				continue;
+			}
+		}
+
+		const oneLetterSymbol = singleBrailleChar.get(singleLetter);
+		if (oneLetterSymbol === undefined) {
+			throw new Error('Unable to translate ' + singleLetter);
+		} else {
+			if (isPunctuation(oneLetterSymbol) && symbols[symbols.length - 1] === KHAF) {
+				symbols.push(FINAL_SHVA);
+			}
+			symbols.push(oneLetterSymbol);
+			i++;
+		}
+	}
+	if (symbols[symbols.length - 1] === KHAF) {
+		symbols.push(FINAL_SHVA);
+	}
+	addSofitSymbols(symbols);
+	return symbols;
 }
 
 function toSighted(intermediateRep) {

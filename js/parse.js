@@ -60,7 +60,7 @@ const NEW_LINE = 42;
 const PARAGRAPH = 43;
 
 function isPunctuation(symbol) {
-	return symbol >= MAQAF && symbol <= NEW_LINE;
+	return symbol >= MAQAF && symbol <= PARAGRAPH;
 }
 
 // 2xx are short vowels
@@ -150,6 +150,9 @@ heScriptInput.set('?', QUESTION_MARK);
 heScriptInput.set('\n', NEW_LINE);
 //heScriptInput.set('', );
 
+/**
+ * @returns true if the symbol is a short vowel.
+ */
 function isVowel(symbol) {
 	return symbol > VOWEL_MARK;
 }
