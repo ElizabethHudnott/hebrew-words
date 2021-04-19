@@ -1,0 +1,42 @@
+remove extra hyphens
+dagesh
+
+and				anD
+for		f-or
+of		o-f
+the		t-he			remove hyphen?
+the				thE
+with	w-ith
+ch		c-h				don't remove hyphen if patach is stolen
+gh				gH
+sh				sH
+th				tH
+wh				wH
+ed		e-d
+er		e-r
+ou
+ow
+owh		o-wh
+en		e-n
+in		i-n
+st				sT
+ar		a-r				don't remove hyphen
+ing				inG
+
+Initial only, not preceeding a hyphen
+be		b-e
+con		c-on
+dis		d-is
+
+Middle only
+ea		e-a
+bb				bB
+cch		c-ch			don't remove hyphen if patach is stolen
+ff				fF
+gg				gG
+ggh		g-gh
+
+Standalone
+yhwh	yhw-h			convert to adonai
+himself	hMf				doesn't exist in Hebrew?
+itself	xF				doesn't exist in Hebrew?

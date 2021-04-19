@@ -100,6 +100,26 @@ singleBrailleChar.set('\n', NEW_LINE);
 doubleBrailleChar.set('\n\n', PARAGRAPH);
 //singleBrailleChar.set('', );
 
+const SubstringPosition = Object.freeze({
+	ANY: 0,
+	INITIAL: 1,
+	MIDDLE: 2,
+	FINAL: 3,
+	WHOLE_WORD: 4
+});
+
+class TextExpansion {
+	constructor(replacements, position) {
+		this.replacement = replacements;
+		this.position = position || SubstringPosition.ANY;
+	}
+}
+
+const longBrailleChar = new Map();
+longBrailleChar.set('the', new TextExpansion([TSADI]));
+longBrailleChar.set('ing', new TextExpansion([SHURUK]));
+//longBrailleChar.set('', );
+
 const heScriptOutput = new Map();
 heScriptOutput.set(ALEPH, 'א');
 heScriptOutput.set(VET, 'ב');
@@ -426,7 +446,7 @@ function parseHebrewInEnglish(str) {
 	const symbols = [];
 	let numericMode = false;
 	let i = 0;
-	while (i < str.length) {
+	letterLoop: while (i < str.length) {
 		let singleLetter = str[i];
 		if (singleLetter >= 'A' && singleLetter <= 'Z') {
 			symbols.push(SHVA);
@@ -457,6 +477,16 @@ function parseHebrewInEnglish(str) {
 		}
 
 		if (!numericMode) {
+			for (let contraction of longBrailleChar.keys()) {
+				if (contraction === singleLetter + str.slice(i + 1, i + contraction.length)) {
+					const expansion = longBrailleChar.get(contraction);
+					const replacement = expansion.replacement;
+					symbols.push(...replacement);
+					i += contraction.length;
+					continue letterLoop;
+				}
+			}
+
 			const doubleLetter = singleLetter + str[i + 1];
 			const twoLetterSymbol = doubleBrailleChar.get(doubleLetter);
 			if (twoLetterSymbol !== undefined) {
