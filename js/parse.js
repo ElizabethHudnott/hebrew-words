@@ -239,12 +239,19 @@ function parseHebrew(input) {
 				// Shuruk
 				newLetters.push(SHURUK);
 			} else {
-				newLetters.push(nextLetter, DAGESH);
+				newLetters.push(thisLetter, DAGESH);
 			}
 			i += 2;
 		} else if (thisLetter === VAV && nextLetter === CHOLAM) {
 			// Cholam Vav
 			newLetters.push(CHOLAM_VAV);
+			i += 2;
+		} else if (
+			(thisLetter === TSERE || thisLetter === HIRIQ) &&
+			nextLetter === YOD && !nextNextIsVowel
+		) {
+			// Tsere-Yod & Hiriq-Yod
+			newLetters.push(thisLetter - 100);
 			i += 2;
 		} else if (nextLetter === SIN_DOT || nextLetter === SHIN_DOT) {
 			// Sin and Shin
